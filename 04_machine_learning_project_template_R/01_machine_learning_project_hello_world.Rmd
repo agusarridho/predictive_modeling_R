@@ -1,0 +1,177 @@
+---
+title: "Machine Learning Project Hello World"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependenciesn
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+```
+
+### Prepare the dataset
+
+```{r echo=TRUE}
+# attach the iris dataset to the environment
+data(iris)
+# rename the dataset
+dataset = iris
+```
+
+```{r}
+# create a list of 80% of the rows in the original dataset we can use for training
+validationIndex = createDataPartition(dataset$Species, p=0.80, list=FALSE)
+# select 20% of the data for validation
+validation = dataset[-validationIndex,]
+# use the remaining 80% of data to training and testing the models
+dataset = dataset[validationIndex,]
+```
+
+### Analyze the dataset
+
+#### Descriptive statistics
+
+```{r}
+# dimensions of dataset
+dim(dataset)
+```
+
+```{r}
+# list types for each variable
+sapply(dataset, class)
+```
+
+```{r}
+# take a peek at the first 5 rows of the data
+head(dataset)
+```
+
+```{r}
+# list the levels for the class
+levels(dataset$Species)
+```
+
+```{r}
+# summarize the class distribution
+percentage = prop.table(table(dataset$Species)) * 100
+cbind(freq=table(dataset$Species), percentage=percentage)
+```
+
+```{r}
+# summarize variable distributions
+summary(dataset)
+```
+
+#### Visualizing the dataset
+
+##### Univariate plots
+
+```{r}
+# split input and output
+x = dataset[,1:4]
+y = dataset[,5]
+```
+
+```{r}
+# boxplot for each variable on one image
+par(mfrow=c(1,4))
+for(i in 1:4) {
+  boxplot(x[,i], main=names(dataset)[i])
+}
+```
+
+```{r}
+# barplot for class breakdown
+plot(y)
+```
+
+##### Multivariate plots
+
+```{r}
+# scatter plot matrix
+featurePlot(x=x, y=y, plot="ellipse")
+```
+
+```{r}
+# box and whisker plots for each variable
+featurePlot(x=x, y=y, plot="box")
+```
+
+```{r}
+# density plots for each variable by class value
+scales = list(x=list(relation="free"), y=list(relation="free"))
+featurePlot(x=x, y=y, plot="density", scales=scales)
+```
+
+### Evaluating algorithms
+
+#### Test harness
+
+```{r}
+# Run algorithms using 10-fold cross validation
+trainControl = trainControl(method="cv", number=10)
+metric = "Accuracy"
+```
+
+#### Build models
+
+```{r}
+# LDA
+set.seed(7)
+fit.lda = train(Species~., data=dataset, method="lda", metric=metric,
+    trControl=trainControl)
+# CART
+set.seed(7)
+fit.cart = train(Species~., data=dataset, method="rpart", metric=metric,
+    trControl=trainControl)
+# KNN
+set.seed(7)
+fit.knn = train(Species~., data=dataset, method="knn", metric=metric,
+    trControl=trainControl)
+# SVM
+set.seed(7)
+fit.svm = train(Species~., data=dataset, method="svmRadial", metric=metric,
+    trControl=trainControl)
+# Random Forest
+set.seed(7)
+fit.rf = train(Species~., data=dataset, method="rf", metric=metric, trControl=trainControl)
+```
+
+#### Select best model
+
+```{r}
+# summarize accuracy of models
+results = resamples(list(lda=fit.lda, cart=fit.cart, knn=fit.knn, svm=fit.svm, rf=fit.rf))
+summary(results)
+```
+
+```{r}
+# compare accuracy of models
+dotplot(results)
+```
+
+```{r}
+# summarize Best Model
+print(fit.lda)
+```
+
+### Making some predictions
+
+```{r}
+# estimate skill of LDA on the validation dataset
+predictions = predict(fit.lda, validation)
+confusionMatrix(predictions, validation$Species)
+```
+

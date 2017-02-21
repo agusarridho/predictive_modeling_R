@@ -1,0 +1,195 @@
+---
+title: "Data Visualization in R"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+Below is the list of packages that we will have to load to run this notebook:
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+install.packages("Amelia")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(graphics)
+library(caret)
+library(mlbench)
+library(Amelia) # for missingness map
+library(corrplot) # for correlation plot
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(iris)
+data(BreastCancer)
+data(Soybean)
+```
+
+### Visualization Packages
+
+Below is the list of three visualization packages in R that should be the most generally useful:
+
+* *graphics package* - excellent for fast and basic plots of data.
+
+* *lattice package* - more pretty plots and more often useful in practice.
+
+* *ggplot2 package* - beautiful plots that we want to generate when we need to present results.
+
+It's a good practice to stick with simple plots from *graphics* for quick  visualization then use wrappers around *lattice* for more useful multivariate plots. For *ggplot2*, it's excellent and lovely, but overkill for dirty data visualization.
+
+Note: loading caret library will automatically load *lattice* and *ggplot2* 
+
+### Univariate Visualization
+
+Plots we can use to understand each variable standalone. The goal is to learn something about the distribution, central tendency and spread of each variable.
+
+#### Histogram
+
+Histograms provide a bar chart of a numeric variable split into bins with the height showing the number of instances that fall into each bin. They are useful to get an indication of the distribution of an variable. In the example below, we can see that most of the variables show a Gaussian or multi-modal Gaussian distribution. We can see the measurements of very small flowers in the Petal width and length variable.
+
+```{r}
+# create histograms for each variable
+par(mfrow=c(1,4))
+for(i in 1:4) {
+  hist(iris[,i], main=names(iris)[i])
+}
+```
+
+#### Density plots
+
+We can smooth out the histograms to lines using a density plot. These are useful for a more abstract depiction of the distribution of each variable. In the example below, we can see the double Gaussian distribution with petal measurements. We can also see a possible exponential (Lapacian- like) distribution for the Sepal width.
+
+```{r}
+# create a panel of simpler density plots by variable
+par(mfrow=c(1,4))
+for(i in 1:4) {
+  plot(density(iris[,i]), main=names(iris)[i])
+}
+```
+
+
+#### Box and Whisker plots
+
+We can look at the distribution of the data a di↵erent way using box and whisker plots. The box captures the middle 50% of the data, the line shows the median and the whiskers of the plots show the reasonable extent of data. Any dots outside the whiskers are good candidates for outliers. In the example below, we can see that the data all has a similar range (and the same units of centimeters). We can also see that Sepal width may have a few outlier values for this data sample.
+
+```{r}
+# Create separate boxplots for each variable
+par(mfrow=c(1,4))
+for(i in 1:4) {
+  boxplot(iris[,i], main=names(iris)[i])
+  }
+```
+
+
+#### Bar plots
+
+In datasets that have categorical rather than numeric variables, we can create bar plots that give an idea of the proportion of instances that belong to each category. In the example below, we can see that some plots have a good mixed distribution and others show a few labels with the overwhelming number of instances.
+
+```{r}
+# create a bar plot of each categorical variable
+par(mfrow=c(2,4))
+for(i in 2:9) {
+  counts = table(BreastCancer[,i])
+  name = names(BreastCancer)[i]
+  barplot(counts, main=name)
+}
+```
+
+
+#### Missingnes map
+
+Missing data can have a big impact on modeling. Some techniques ignore missing data, others break. We can use a missing plot to get a quick idea of the amount of missing data in our dataset. The x-axis shows variables and the y-axis shows instances. Horizontal lines indicate missing data for an instance, vertical blocks represent missing data for an variable. In the example below, we can see that some instances have a lot of missing data across some or most of the variables.
+
+```{r}
+# create a missing map
+missmap(Soybean, col=c("black", "grey"), legend=FALSE)
+```
+
+#### Normal Q-Q Plot
+
+The function *qnorm()* will plot a Normal Q-Q plot of our data. It basically creates a scatter plot between the quantiles of normal distribution with the quantiles of our data. Therefore, when the pattern is linear, then our data can be assumed as normally distributed. In the example below, we can see the sample of pattern in Normal Q-Q plot for normal distribution, chi-square distribution, and binomial distribution.
+
+```{r}
+#example of normal distribution
+qqnorm(rnorm(100))
+```
+
+```{r}
+#example of chi-square distribution with degree of freedom 4
+qqnorm(rchisq(100, df=4))
+```
+
+```{r}
+#example of binomial distribution with 100 trials and .5 success probability on each trial
+qqnorm(rbinom(100, size=100, prob=.5))
+```
+
+### Multivariate Visualization
+
+Plots that can help we to better understand the interactions between variables. The goal is to learn something about the distribution, central tendency and spread over groups of data, typically pairs of variables.
+
+#### Correlation plot
+
+We can calculate the correlation between each pair of numeric variables. These pair-wise correlations can be plotted in a correlation matrix to given an idea of which variables change together. In the example below, a dot-representation was used where blue represents positive correlation and red negative. The larger the dot the larger the correlation. We can see that the matrix is symmetrical and that the diagonal variables are perfectly positively correlated (because it shows the correlation of each variable with itself). We can see that some of the variables are highly correlated.
+
+```{r}
+# calculate correlations
+correlations = cor(iris[,1:4])
+# create correlation plot
+corrplot(correlations, method="circle")
+```
+
+
+#### Scatter plots matrix
+
+A scatter plot plots two variables together, one on each of the x- and y-axes with points showing the interaction. The spread of the points indicates the relationship between the variables. We can create scatter plots for all pairs of variables in our dataset, called a scatter plot matrix. In the example below, note that the matrix is symmetrical, showing the same plots with axes reversed. This aids in looking at our data from multiple perspectives. Note the linear (diagonal line) relationship between petal length and width.
+
+```{r}
+# pair-wise scatter plots of all 4 variables
+pairs(iris)
+```
+
+
+#### Scatter plots matrix by class
+
+The points in a scatter plot matrix can be colored by the class label in classification problems. This can help to spot clear (or unclear) separation of classes and perhaps give an idea of how difficult the problem may be. In the example below, note the clear separation of the points by class label on most pair-wise plots.
+
+```{r}
+# pair-wise scatter plots colored by class
+pairs(Species~., data=iris, col=iris$Species)
+```
+
+
+#### Density plots by class
+
+We can review the density distribution of each variable broken down by class value. Like the scatter plot matrix, the density plot by class can help see the separation of classes. It can also help to understand the overlap in class values for an variable. In the example below, we can see that some classes do not overlap at all (e.g. Petal Length) where as with other variables there are hard to tease apart (e.g. Sepal Width).
+
+```{r}
+# density plots for each variable by class value
+x = iris[,1:4]
+y = iris[,5]
+scales = list(x=list(relation="free"), y=list(relation="free"))
+featurePlot(x=x, y=y, plot="density", scales=scales)
+```
+
+
+#### Box and Whisker plots by class
+
+We can also review the boxplot distributions of each variable by class value. This too can help in understanding how each variable relates to the class value, but from a di↵erent perspective to that of the density plots. In the example below, the plots help to understand the overlap and separation of the variable-class groups. We can see some good separation of the Setosa class for the Petal Length variable.
+
+```{r}
+# box and whisker plots for each variable by class value
+x = iris[,1:4]
+y = iris[,5]
+featurePlot(x=x, y=y, plot="box")
+```

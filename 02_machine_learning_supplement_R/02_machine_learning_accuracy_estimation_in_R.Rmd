@@ -1,0 +1,110 @@
+---
+title: "Machine Learning Accuracy Estimation through Resampling Methods in R"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+install.packages("klaR")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+library(klaR)
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(iris)
+```
+
+#### Data split
+
+Data splitting involves partitioning the data into an explicit training dataset used to prepare the model and an unseen test dataset used to evaluate the model’s performance on unseen data. It is useful when you have a very large dataset so that the test dataset can provide a meaningful estimation of performance, or for when you are using slow methods and need a quick approximation of performance.
+
+The example below splits the iris dataset so that 80% is used for training a Naive Bayes model and 20% is used to evaluate the model’s performance. Running this example, you will see an estimation of model accuracy on the test subset of the data.
+
+```{r}
+# define an 80%/20% train/test split of the dataset
+trainIndex = createDataPartition(iris$Species, p=0.80, list=FALSE)
+dataTrain = iris[ trainIndex,]
+dataTest = iris[-trainIndex,]
+# train a naive Bayes model
+fit = NaiveBayes(Species~., data=dataTrain)
+# make predictions
+predictions = predict(fit, dataTest[,1:4])
+# summarize results
+confusionMatrix(predictions$class, dataTest$Species)
+```
+
+#### Bootstrap
+
+Bootstrap resampling involves taking random samples from the dataset (with re-selection) against which to evaluate the model. In aggregate, the results provide an indication of the variance of the model’s performance. Typically, large number of resampling iterations are performed (thousands or tens of thousands).
+
+The following example uses a bootstrap with 100 resamples to estimate the accuracy of a Naive Bayes model. Running this example, you will see the estimated accuracy of the Naive Bayes model with
+two different values for the usekernel model parameter.
+
+```{r}
+# define training control
+trainControl = trainControl(method="boot", number=100)
+# evalaute the model
+fit = train(Species~., data=iris, trControl=trainControl, method="nb")
+# display the results
+print(fit)
+```
+
+#### K-folds cross validation
+
+The k-fold cross validation method involves splitting the dataset into k-subsets. Each subset is held-out while the model is trained on all other subsets. This process is repeated until accuracy is determined for each instance in the dataset, and an overall accuracy estimate is provided. It is a robust method for estimating accuracy, and the size of k can tune the amount of bias in the estimate, with popular values set to 5 and 10. 
+
+The following example uses 10-fold cross validation to estimate the accuracy of the Naive Bayes algorithm on the iris dataset. Running this example, you will see the estimated of the accuracy of the model using 10-fold cross validation.
+
+```{r}
+# define training control
+trainControl = trainControl(method="cv", number=10)
+# evaluate the model
+fit = train(Species~., data=iris, trControl=trainControl, method="nb")
+# display the results
+print(fit)
+```
+
+#### Repeated k-folds cross validation
+
+The process of splitting the data into k-folds can be repeated a number of times, this is called Repeated k-fold Cross Validation. The final model accuracy is taken as the mean from the number of repeats. 
+
+The following example demonstrates 10-fold cross validation with 3 repeats to estimate the accuracy of the Naive Bayes algorithm on the iris dataset.
+
+```{r}
+# define training control
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
+# evaluate the model
+fit = train(Species~., data=iris, trControl=trainControl, method="nb")
+# display the results
+print(fit)
+```
+
+#### Leave one out cross validation
+
+In Leave One Out Cross Validation (LOOCV), a data instance is left out and a model constructed on all other data instances in the training set. This is repeated for all data instances. 
+
+The following example demonstrates LOOCV to estimate the accuracy of the Naive Bayes algorithm on the iris dataset.
+
+```{r}
+# define training control
+trainControl = trainControl(method="LOOCV")
+# evaluate the model
+fit = train(Species~., data=iris, trControl=trainControl, method="nb")
+# display the results
+print(fit)
+```

@@ -1,0 +1,206 @@
+---
+title: "Machine Learning Datasets in R"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+Below is the list of packages that we will have to load to run this notebook:
+```{r}
+install.packages("mlbench")
+install.packages("AppliedPredictiveModeling")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(mlbench)
+library(AppliedPredictiveModeling)
+library(RCurl)
+```
+
+### Introduction to Standard Datasets
+
+There are three packages that we can use to have various datasets for our experiments. These packages are *datasets*, *mlbench* and *AppliedPredictiveModeling*.
+
+On each dataset we will peek at the data and show the dimension of the data. 
+
+* *Peeking at the data* - The very first thing to do is to just look at some raw data from our dataset. If our dataset is small we might be able to display it all on the screen. Often it is not, so we can take a small sample and review that.
+
+* *Showing data dimension* - It's much better to have a precise figure of instances and variables. Many instances might mean that we need to work with a smaller sample of our data data so that modeling is computationally tractable. On the other hand, many variables might mean that we need to select those that are most relevant. Also, when we have more variables than instances, we may need to select specific modeling techniques.
+
+#### Package *datasets*
+
+The *datasets* package comes with base R which means we do not need to explicitly load the package. Below are three sample datasets from the package:
+
+##### 1. Longley's economic
+
+* Dataset problem - regression
+  
+    + We predict number of people being employed from economic variables
+    
+```{r}
+data("longley")
+# view first 10 instances
+head(longley, 10)
+# number of instances and variables
+dim(longley)
+```
+
+##### 2. Iris flower
+
+* Dataset problem - multiclass classification
+
+    + We predict Iris flower species from flower measurements
+    
+```{r}
+data("iris")
+# view first 10 instances
+head(iris, 10)
+# number of instances and variables
+dim(iris)
+```
+
+##### 3. Mtcars
+
+* Dataset problem - regression
+
+    + We predict the result of motor trend car road tests
+    
+```{r}
+data("mtcars")
+# view first 10 instances
+head(mtcars, 10)
+# number of instances and variables
+dim(mtcars)
+```
+
+#### Package *mlbench*
+
+The *mlbench* package contains a collection of artificial and real-world machine learning benchmark problems, including, e.g., several data sets from the UCI repository.Below are seven sample datasets from the package:
+
+##### 1. Boston housing
+
+* Dataset problem - regression
+  
+    + We predict the median house price in 1000 for suburbs in Boston
+    
+```{r}
+data("BostonHousing")
+# view first 10 instances
+head(BostonHousing, 10)
+# number of instances and variables
+dim(BostonHousing)
+```
+
+##### 2. Wisconsin breast cancer
+
+* Dataset problem - binary classification
+  
+    + We predict whether a tissue sample is malignant or benign given properties about the tissue sample
+    
+```{r}
+data("BreastCancer")
+# view first 10 instances
+head(BreastCancer, 10)
+# number of instances and variables
+dim(BreastCancer)
+```
+
+##### 3. Glass identification
+
+* Dataset problem - regression
+  
+    + We predict the glass type from chemical properties
+    
+```{r}
+data("Glass")
+# view first 10 instances
+head(Glass, 10)
+# number of instances and variables
+dim(Glass)
+```
+
+##### 4. John Hopkins University ionosphere
+
+* Dataset problem - regression
+  
+    + We predict high-energy structures in the atmosphere from antenna data
+
+```{r}
+data("Ionosphere")
+# view first 10 instances
+head(Ionosphere, 10)
+# number of instances and variables
+dim(Ionosphere)
+```
+
+##### 5. Pima indians diabetes
+
+* Dataset problem - binary classification
+  
+    + We predict the onset of diabetes in female Pima Indians from medical record data
+    
+```{r}
+data("PimaIndiansDiabetes")
+# view first 10 instances
+head(PimaIndiansDiabetes, 10)
+# number of instances and variables
+dim(PimaIndiansDiabetes)
+```
+
+##### 6. Sonar, Mines and Rocks
+
+* Dataset problem - binary classification
+  
+    + We predict metal or rock returns from sonar return data
+    
+```{r}
+data("Sonar")
+# view first 10 instances
+head(Sonar, 10)
+# number of instances and variables
+dim(Sonar)
+```
+
+##### 7. Soybean
+
+* Dataset problem - multiclass classification
+  
+    + We predict problems with soybean crops from crop data
+    
+```{r}
+data("Soybean")
+# view first 10 instances
+head(Soybean, 10)
+# number of instances and variables
+dim(Soybean)
+```
+
+#### Package *AppliedPredictiveModeling*
+
+Some books that use R also include their own R package that provides all of the code and datasets used in the book. For example, there is one book entitled Applied Predictive Modeling that has its own package called *AppliedPredictiveModeling*.Below is one sample dataset from the package:
+
+##### Abalone
+
+* Dataset problem - regression
+  
+    + We predict abalone age from abalone measurement data
+    
+```{r}
+data("abalone")
+# view first 10 instances
+head(abalone, 10)
+# number of instances and variables
+dim(abalone)
+```
+
+### Loading the dataset from CSV URL
+
+Alternatively, we can load directly the dataset in CSV format from an online resource.
+
+```{r}
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data"
+dataset = read.csv(url)
+```

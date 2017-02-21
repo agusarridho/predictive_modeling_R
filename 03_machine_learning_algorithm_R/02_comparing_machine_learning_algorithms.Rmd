@@ -1,0 +1,144 @@
+---
+title: "Comparing Machine Learning Algorithms"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(PimaIndiansDiabetes)
+```
+
+### Prepare Training Scheme
+
+In this section we will train the 5 machine learning models that we will compare in the next section. We will use repeated cross validation with 10 folds and 3 repeats, a common standard configuration for comparing models. The evaluation metric is accuracy and kappa because they are easy to interpret. The algorithms were chosen for their diversity of representation and learning style.
+
+* Classification and Regression Trees (CART).
+
+* Linear Discriminant Analysis (LDA).
+
+* Support Vector Machine with Radial Basis Function (SVM). 
+
+* k-Nearest Neighbors (KNN).
+
+* Random Forest (RF).
+
+After the models are trained, they are added to a list and resamples() is called on the list of models. This function checks that the models are comparable and that they used the same training scheme (trainControl configuration). This object contains the evaluation metrics for each fold and each repeat for each evaluated algorithm. The functions that we use in the next section all expect an object with this data.
+```{r}
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
+# CART
+set.seed(7)
+fit.cart = train(diabetes~., data=PimaIndiansDiabetes, method="rpart",
+    trControl=trainControl)
+# LDA
+set.seed(7)
+fit.lda = train(diabetes~., data=PimaIndiansDiabetes, method="lda", trControl=trainControl)
+# SVM
+set.seed(7)
+fit.svm = train(diabetes~., data=PimaIndiansDiabetes, method="svmRadial",
+    trControl=trainControl)
+# KNN
+set.seed(7)
+fit.knn = train(diabetes~., data=PimaIndiansDiabetes, method="knn", trControl=trainControl)
+# Random Forest
+set.seed(7)
+fit.rf = train(diabetes~., data=PimaIndiansDiabetes, method="rf", trControl=trainControl)
+# collect resamples
+results = resamples(list(CART=fit.cart, LDA=fit.lda, SVM=fit.svm, KNN=fit.knn, RF=fit.rf))
+```
+
+### Comparing Results
+
+In this section we will look at 8 different techniques for comparing the estimated accuracy of the constructed models.
+
+#### Table summary
+
+The Table Summary is the easiest comparison that you can do. Simply call the summary() function and pass it the resamples result. It will create a table with one algorithm for each row and evaluation metrics for each column. It's useful to look at the mean and the max columns.
+```{r}
+# summarize differences between models
+summary(results)
+```
+
+#### Box and whisker plots
+
+Box and Whisker Plots are a useful way to look at the spread of the estimated accuracies for different methods and how they relate. Note that the boxes are ordered from highest to lowest mean accuracy. I find it useful to look at the mean values (dots) and the overlaps of the boxes (middle 50% of results).
+```{r}
+# box and whisker plots to compare models
+scales = list(x=list(relation="free"), y=list(relation="free"))
+bwplot(results, scales=scales)
+```
+
+#### Density plots
+
+You can show the distribution of model accuracy as density plots. This is a useful way to evaluate the overlap in the estimated behavior of algorithms. Note the use of | to show ticks of the data points below the distributions. It's useful to look at the differences in the peaks as well as the spread or base of the distributions.
+```{r}
+# density plots of accuracy
+scales = list(x=list(relation="free"), y=list(relation="free"))
+densityplot(results, scales=scales, pch = "|")
+```
+
+#### Dot plots
+
+These are useful plots as they show both the mean estimated accuracy as well as the 95% confidence interval (e.g. the range in which 95% of observed scores fell). It's useful to compare the means and eye-ball the overlap of the spreads between
+algorithms.
+```{r}
+# dot plots of accuracy
+scales = list(x=list(relation="free"), y=list(relation="free"))
+dotplot(results, scales=scales)
+```
+
+#### Parallel plots
+
+Parallel Plots are another way to look at the data. It shows how each trial of each cross validation fold behaved for each of the algorithms tested. It can help you see how those hold-out subsets that were di cult for one algorithm affected other algorithms. This can be a tricky plot to interpret. I like to think that this can be helpful in thinking about how different methods could be combined in an ensemble prediction (e.g. stacking) at a later time, especially if you see correlated movements in opposite directions.
+```{r}
+# parallel plots to compare models
+parallelplot(results)
+```
+
+#### Scatterplot matrix
+
+This creates a scatter plot matrix of all fold-trial results for an algorithm compared to the same fold-trial results for all other algorithms. All pairs are plotted. This creates a scatter plot matrix of all fold-trial results for an algorithm compared to the same fold-trial results for all other algorithms. All pairs are plotted.
+```{r}
+# pair-wise scatter plots of predictions to compare models
+splom(results)
+```
+
+#### Pairwise xyPlots
+
+You can zoom in on one pair-wise comparison of the accuracy of trial-folds for two machine learning algorithms with an xyplot. In this case we can see the seemingly correlated accuracy of the LDA and SVM models.
+```{r}
+# xyplot plots to compare models
+xyplot(results, models=c("LDA", "SVM"))
+```
+
+#### Statistical Significance Tests
+
+You can calculate the significance of the differences between the metric distributions of diffeerent machine learning algorithms. We can summarize the results directly by calling the summary() function. We can see a table of pair-wise statistical significance scores. The lower diagonal of the table shows p-values for the null hypothesis (distributions are the same), smaller is better.
+
+The upper diagonal of the table shows the estimated difference between the distributions. If we think that LDA is the most accurate model from looking at the previous graphs, we can get an estimate of how much better than specific other models in terms of absolute accuracy. These scores can help with any accuracy claims you might want to make between specific algorithms.
+
+A good tip is to increase the number of trials to increase the size of the populations and perhaps result in more precise p-values.
+```{r}
+# difference in model predictions
+diffs = diff(results)
+# summarize p-values for pair-wise comparisons
+summary(diffs)
+```

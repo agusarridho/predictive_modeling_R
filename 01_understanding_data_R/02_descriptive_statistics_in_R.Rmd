@@ -1,0 +1,113 @@
+---
+title: "Descriptive Statistics in R"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+Below is the list of packages that we will have to load to run this notebook:
+
+```{r}
+install.packages("mlbench")
+install.packages("e1071")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(mlbench)
+library(e1071) # for skewness
+library(nortest) # for anderson darling
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(PimaIndiansDiabetes)
+```
+
+### Using Descriptive Statistics
+
+We will explore some common techniques to understand the data through descriptive statistics.
+
+#### Types of data
+
+we need to know the types of the variables in our data. The types will indicate the types of further analysis, types of visualization and even the types of machine learning algorithms that we can use. Additionally, perhaps some variables oure loaded as one type (e.g. integer) and could in fact be represented as another type (e.g. a categorical factor).
+
+```{r}
+sapply(PimaIndiansDiabetes, class)
+```
+
+#### Distribution of class variable
+
+In a classification problem we must know the proportion of instances that belong to each class label. This is important because it may highlight an imbalance in the data, that if severe may need to be addressed with rebalancing techniques. In the case of a multiclass classification problem it may expose a class with a small number of instances that may be candidates for removing from the dataset.
+
+```{r}
+y = PimaIndiansDiabetes$diabetes
+cbind(freq=table(y), percent=round(prop.table(table(y)),2))
+```
+
+#### Summarization of data
+
+The **summary()** function summarizes each variable in our dataset by creating a table for each variable and lists a breakdown of values. Factors are described as counts next to each class label. Numerical variables are described using six properties (Min, First Quartile, Median, Mean, Third Quartile and Max). The breakdown also includes an indication of the number of missing values for an variable.
+
+```{r}
+summary(PimaIndiansDiabetes)
+```
+
+#### Standard deviation of independent variables
+
+One thing missing from the **summary()** function above is the standard deviations. The standard deviation along with the mean are useful to know whether the data has a Gaussian distribution. For instance, it can be useful for a quick outlier removal tool, where any values that are more than three times the standard deviation from the mean are outside of 99.7% of the data.
+
+```{r}
+sapply(PimaIndiansDiabetes[,1:8], sd)
+```
+
+#### Mode of independent variables
+
+Another measurement that's missing from the **summary()** function is the mode which represent the most frequent value in a distribution of data.
+
+```{r}
+# create the mode function
+mode = function(x) {
+  ux = unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+# calculate mode
+sapply(PimaIndiansDiabetes[,1:8], mode)
+```
+
+#### Skewness of data
+
+If a distribution looks nearly-Gaussian but is pushed far left or right it is useful to know the skew. Getting a feeling for the skew is much easier with plots rather than looking at the summary. Nonetheless, calculating the skew up-front gives we a reference that we can use later if we decide to correct the skew for an variable.
+
+* It's left skewed when the value is less than zero and right skewed when the value is greater than zero
+
+* The larger the deviations from 0, the more skewed the data
+
+```{r}
+apply(PimaIndiansDiabetes[,1:8], 2, skewness)
+```
+
+##### Kurtosis
+
+Kurtosis measures the tailedness of a probability distribution.
+
+* It is mesokurtic (intermediate) distribution when kurtosis value = 0. (normal distribution)
+
+* It is platykurtic (broad/ thinner tails) distribution when kurtosis value < 0. (continuous or discrete uniform distributions, and the raised cosine distribution)
+
+* It is leptokurtic (slender/ fatter tails) distribution when kurtosis value > 0. (Student's t-distribution, Rayleigh distribution, Laplace distribution, exponential distribution, Poisson distribution and logistic distribution).
+
+```{r}
+apply(PimaIndiansDiabetes[,1:8], 2, kurtosis)
+```
+
+#### Correlations between independent variables
+
+For numeric variables, an excellent way to think about variable-to-variable interactions is to calculate correlations for each pair of variables. The **cor()** function creates a symmetrical table of all pairs of variable correlations. Deviations from zero show more positive or negative correlation. Values above approximately 0.75 or below -0.75 are perhaps more interesting as they show a high correlation or high negative correlation. Values of 1 and -1 show full positive or negative correlation.
+
+```{r}
+cor(PimaIndiansDiabetes[,1:8])
+```

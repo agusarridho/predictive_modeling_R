@@ -1,0 +1,105 @@
+---
+title: "Machine Learning Evaluation Metrics in R"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependenciesn
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(PimaIndiansDiabetes)
+data(longley)
+data(iris)
+```
+
+#### Accuracy and Kappa
+
+Accuracy and Kappa are the default metrics used to evaluate algorithms on binary and multiclass classification datasets in caret. Accuracy is the percentage of correctly classified instances out of all instances. It is more useful on a binary classification than multiclass classification problem because it can be less clear exactly how the accuracy breaks down across those classes (e.g. you need to go deeper with a confusion matrix).
+
+Kappa or Cohen’s Kappa is like classification accuracy, except that it is normalized at the baseline of random chance on your dataset. It is a more useful measure to use on problems that have an imbalance in the classes (e.g. a 70% to 30% split for classes 0 and 1 and you can achieve 70% accuracy by predicting all instances are for class 0). In the example below the Pima Indians diabetes dataset is used. It has a class break down of 65% to 35% for negative and positive outcomes.
+
+Running this example, we can see tables of Accuracy and Kappa for the evaluated algorithm. This includes the mean values (left) and the standard deviations (marked as SD) for each metric, taken over the population of cross validation folds and trials.
+
+```{r}
+# prepare resampling method
+trainControl = trainControl(method="cv", number=5)
+set.seed(7)
+fit = train(diabetes~., data=PimaIndiansDiabetes, method="glm", metric="Accuracy",
+    trControl=trainControl)
+# display results
+print(fit)
+```
+
+#### RMSE and R^2^
+
+RMSE and R^2^ are the default metrics used to evaluate algorithms on regression datasets in caret. RMSE or Root Mean Squared Error is the average deviation of the predictions from the observations. It is useful to get a gross idea of how well (or not) an algorithm is doing, in the units of the output variable.
+
+R^2^ spoken as R Squared (also called the coe cient of determination) provides a goodness-of- fit measure for the predictions to the observations. This is a value between 0 and 1 for no-fit and perfect fit respectively. In this example the longley economic dataset is used. The output variable for this dataset is a number employed people in the population. It is not clear whether this is an actual count (e.g. in millions) or a percentage.
+
+Running this example, we can see tables of RMSE and R Squared for the evaluated algorithm. Again, you can see the mean and standard deviations of both metrics are provided.
+
+```{r}
+# prepare resampling method
+trainControl = trainControl(method="cv", number=5)
+set.seed(7)
+fit = train(Employed~., data=longley, method="lm", metric="RMSE", trControl=trainControl)
+# display results
+print(fit)
+```
+
+#### Area Under (ROC) Curve
+
+ROC metrics are only suitable for binary classification problems (e.g. two classes). To calcu- late ROC information, you must change the summaryFunction in your trainControl to be twoClassSummary. This will calculate the Area Under ROC Curve (AUROC) also called just Area Under Curve (AUC), sensitivity and specificity.
+
+ROC is actually the area under the ROC curve or AUC. The AUC represents a model’s ability to discriminate between positive and negative classes. An area of 1.0 represents a model that predicts perfectly. An area of 0.5 represents a model as good as random.
+
+* Sensitivity is the true positive rate also called the recall. It is the number of instances from the positive (first) class that actually predicted correctly.
+
+* Specificity is also called the true negative rate. It is the number of instances from the
+negative class (second class) that were actually predicted correctly.
+
+ROC can be broken down into sensitivity and specificity. A binary classification problem is really a trade-off between sensitivity and specificity.
+
+```{r}
+# prepare resampling method
+trainControl = trainControl(method="cv", number=5, classProbs=TRUE,
+    summaryFunction=twoClassSummary)
+set.seed(7)
+fit = train(diabetes~., data=PimaIndiansDiabetes, method="glm", metric="ROC",
+    trControl=trainControl)
+# display results
+print(fit)
+```
+
+#### Logarithmic loss
+
+Logarithmic Loss (or LogLoss) is used to evaluate binary classification but it is more common for multiclass classification algorithms. Specifically, it evaluates the probabilities estimated by the algorithms. In this case we see LogLoss calculated for the iris flower multiclass classification problem.
+
+Logloss is minimized and we can see the optimal CART (rpart) model had an argument cp value of 0 (the first row of results).
+
+```{r}
+# prepare resampling method
+trainControl = trainControl(method="cv", number=5, classProbs=TRUE,
+    summaryFunction=mnLogLoss)
+set.seed(1234)
+fit = train(Species~., data=iris, method="rpart", metric="logLoss", trControl=trainControl)
+# display results
+print(fit)
+```

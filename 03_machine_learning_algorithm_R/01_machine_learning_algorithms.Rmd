@@ -1,0 +1,385 @@
+---
+title: "Machine Learning Algorithms"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependenciesn
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+library(MASS) # for Linear Discriminant Analysis without caret
+library(glmnet) # for Regularized Regression without caret
+library(e1071) # for Naive Bayes without caret
+library(kernlab) # for SVM without caret
+library(rpart) # for CART without caret
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(BostonHousing) # regression problem
+data(PimaIndiansDiabetes) # classification problem
+```
+
+### Linear Algorithms
+
+These are methods that make large assumptions about the form of the function being modeled. As such they have a high bias but are often fast to train. The final models are also often easy (or easier) to interpret, making them desirable as final models. If the results are suitably accurate, you may not need to move onto using nonlinear methods.
+
+#### Linear Regression
+
+The lm() function is in the stats package and creates a linear regression model using ordinary least squares.
+
+```{r}
+# without caret
+# fit model
+fit = lm(medv~., BostonHousing)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, BostonHousing)
+# summarize accuracy
+mse = mean((BostonHousing$medv - predictions)^2)
+print(mse)
+```
+
+The lm implementation can be used in caret as follows:
+```{r}
+# with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.lm = train(medv~., data=BostonHousing, method="lm", metric="RMSE",
+    preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.lm)
+```
+
+#### Logistic Regression
+
+The glm() function is in the stats package and creates a generalized linear model for regression or classification. It can be configured to perform a logistic regression suitable for binary classification problems.
+```{r}
+# without caret
+# fit model
+fit = glm(diabetes~., data=PimaIndiansDiabetes, family=binomial(link= logit ))
+# summarize the fit
+print(fit)
+# make predictions
+probabilities = predict(fit, PimaIndiansDiabetes[,1:8], type= response )
+predictions = ifelse(probabilities > 0.5, pos , neg )
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+The glm algorithm can be used in caret as follows:
+```{r}
+# with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.glm = train(diabetes~., data=PimaIndiansDiabetes, method="glm", metric="Accuracy",
+    preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.glm)
+```
+
+#### Linear Discriminant Analysis
+
+The lda() function is in the MASS package and creates a linear model of a classification problem.
+```{r}
+# without caret
+# fit model
+fit = lda(diabetes~., data=PimaIndiansDiabetes)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, PimaIndiansDiabetes[,1:8]) class
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+The lda algorithm can be used in caret as follows:
+```{r}
+# with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.lda = train(diabetes~., data=PimaIndiansDiabetes, method="lda", metric="Accuracy",
+    preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.lda)
+```
+
+#### Regularized Regression
+
+The glmnet() function is in the glmnet package and can be used for classification or regression.
+
+```{r}
+# classification without caret
+x = as.matrix(PimaIndiansDiabetes[,1:8])
+y = as.matrix(PimaIndiansDiabetes[,9])
+# fit model
+fit = glmnet(x, y, family="binomial", alpha=0.5, lambda=0.001)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, x, type="class")
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+```{r}
+# regression without caret
+BostonHousing$chas = as.numeric(as.character(BostonHousing$chas))
+x = as.matrix(BostonHousing[,1:13])
+y = as.matrix(BostonHousing[,14])
+# fit model
+fit = glmnet(x, y, family="gaussian", alpha=0.5, lambda=0.001)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, x, type="link")
+# summarize accuracy
+mse = mean((y - predictions)^2)
+print(mse)
+```
+
+
+It can also be configured to perform three important types of regularization: lasso, ridge and elastic net by configuring the alpha parameter to 1, 0 or in [0,1] respectively. The glmnet implementation can be used in caret for classification and regression as follows:
+```{r}
+# classification with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.glmnet = train(diabetes~., data=PimaIndiansDiabetes, method="glmnet",
+    metric="Accuracy", preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.glmnet)
+```
+
+
+```{r}
+# regression with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.glmnet = train(medv~., data=BostonHousing, method="glmnet", metric="RMSE",
+    preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.glmnet)
+```
+
+### Non Linear Algorithms
+
+These are machine learning algorithms that make fewer assumptions about the underlying function being modeled. As such, they have a higher variance but often result in higher accuracy. Their increased flexibility also can make them slower to train or increase their memory requirements.
+
+#### k-Nearest Neighbour
+
+The knn3() function is in the caret package and does not create a model. Instead it makes predictions from the training dataset directly. It can be used for classification or regression.
+
+```{r}
+# classification without caret train()
+# fit model
+fit = knn3(diabetes~., data=PimaIndiansDiabetes, k=3)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, PimaIndiansDiabetes[,1:8], type="class")
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+
+```{r}
+# regression without caret train()
+BostonHousing$chas = as.numeric(as.character(BostonHousing$chas))
+x = as.matrix(BostonHousing[,1:13])
+y = as.matrix(BostonHousing[,14])
+# fit model
+fit = knnreg(x, y, k=3)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, x)
+# summarize accuracy
+mse = mean((BostonHousing$medv - predictions)^2)
+print(mse)
+```
+
+The knn3 implementation can be used within the caret train() function for classification and regression as follows:
+
+```{r}
+# classification with caret train()
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.knn = train(diabetes~., data=PimaIndiansDiabetes, method="knn", metric="Accuracy",
+    preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.knn)
+```
+
+
+```{r}
+# regression with caret train()
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.knn = train(medv~., data=BostonHousing, method="knn", metric="RMSE",
+    preProcess=c("center", "scale"), trControl=trainControl)
+# summarize fit
+print(fit.knn)
+```
+
+#### Naive Bayes
+
+The naiveBayes() function is in the e1071 package and models the probabilities of each variable to the outcome variable independently. It can be used for classification problems.
+
+```{r}
+# without caret
+# fit model
+fit = naiveBayes(diabetes~., data=PimaIndiansDiabetes)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, PimaIndiansDiabetes[,1:8])
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+A very similar naive Bayes implementation (NaiveBayes from the klaR package) can be
+used with the caret package as follows:
+
+```{r}
+# with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.nb = train(diabetes~., data=PimaIndiansDiabetes, method="nb", metric="Accuracy",
+    trControl=trainControl)
+# summarize fit
+print(fit.nb)
+```
+
+#### Support Vector Machine
+
+The ksvm() function is in the kernlab package and can be used for classification or regression. It is a wrapper for the LIBSVM software package and provides a suite of kernel types and configuration options. These examples use a Radial Basis kernel.
+
+```{r}
+# classification without caret
+# fit model
+fit = ksvm(diabetes~., data=PimaIndiansDiabetes, kernel="rbfdot")
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, PimaIndiansDiabetes[,1:8], type="response")
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+
+```{r}
+# regression without caret
+# fit model
+fit = ksvm(medv~., BostonHousing, kernel="rbfdot")
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, BostonHousing)
+# summarize accuracy
+mse = mean((BostonHousing$medv - predictions)^2)
+print(mse)
+```
+
+The SVM with Radial Basis kernel implementation can be used with caret for classification and regression as follows:
+
+```{r}
+# classification with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.svmRadial = train(diabetes~., data=PimaIndiansDiabetes, method="svmRadial",
+    metric="Accuracy", trControl=trainControl)
+# summarize fit
+print(fit.svmRadial)
+```
+
+
+```{r}
+# regression with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.svmRadial = train(medv~., data=BostonHousing, method="svmRadial", metric="RMSE",
+    trControl=trainControl)
+# summarize fit
+print(fit.svmRadial)
+```
+
+#### Classification and Regression Trees
+
+The rpart() function in the rpart package provides an implementation of CART (Classification And Regression Trees) for classification and regression.
+
+```{r}
+# classification without caret
+# fit model
+fit = rpart(diabetes~., data=PimaIndiansDiabetes)
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, PimaIndiansDiabetes[,1:8], type="class")
+# summarize accuracy
+table(predictions, PimaIndiansDiabetes$diabetes)
+```
+
+
+```{r}
+# regression without caret
+# fit model
+fit = rpart(medv~., data=BostonHousing, control=rpart.control(minsplit=5))
+# summarize the fit
+print(fit)
+# make predictions
+predictions = predict(fit, BostonHousing[,1:13])
+# summarize accuracy
+mse = mean((BostonHousing$medv - predictions)^2)
+print(mse)
+```
+
+The rpart implementation can be used with caret for classification and regression as follows:
+
+```{r}
+# classification with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=5)
+fit.rpart = train(diabetes~., data=PimaIndiansDiabetes, method="rpart", metric="Accuracy",
+    trControl=trainControl)
+# summarize fit
+print(fit.rpart)
+```
+
+```{r}
+# regression with caret
+# train
+set.seed(7)
+trainControl = trainControl(method="cv", number=2)
+fit.rpart = train(medv~., data=BostonHousing, method="rpart", metric="RMSE",
+    trControl=trainControl)
+# summarize fit
+print(fit.rpart)
+```
+
+### More algorithms
+There are many other algorithms provided by R and available in caret. We can find a mapping of machine learning functions and packages to their name in the caret package on the [Caret Model List](https://topepo.github.io/caret/available-models.html).

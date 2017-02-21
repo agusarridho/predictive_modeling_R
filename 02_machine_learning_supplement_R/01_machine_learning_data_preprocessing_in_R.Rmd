@@ -1,0 +1,163 @@
+---
+title: "Machine Learning Pre-Processing in R"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+```
+
+### Loading and summarize default datasets
+
+```{r echo=TRUE}
+data(iris)
+data(PimaIndiansDiabetes)
+# view default datasets before being transformed
+summary(iris)
+summary(PimaIndiansDiabetes)
+```
+
+### Methods of Data Pre-Processing
+
+The caret package in R provides a number of useful data transforms that we can use in two ways:
+
+* Standalone : Transforms can be modeled from training data and applied to multiple datasets. The model of the transform is prepared using the *preProcess()* function and applied to a dataset using the *predict()* function.
+
+* Training : Transforms can be prepared and applied automatically during model evaluation. Transforms applied during training are prepared using the *preProcess()* function and passed to the *train()* function via the preProcess argument.
+
+A number of data pre-processing examples are presented in this notebook using the standalone method. However, we can just as easily use the prepared pre-processed model during model training. All of the pre-processing examples in this section are for numerical data. The preProcess() function will skip over non-numeric data without error. The data transforms presented are more useful for regression algorithms, instance-based methods (like KNN and LVQ), support vector machines and neural networks. They are less useful for tree and rule-based methods.
+
+#### Scale
+
+The scale transform calculates the standard deviation for an variable and divides each value by that standard deviation. This is a useful operation for scaling data with a Gaussian distribution consistently.
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(iris[,1:4], method=c("scale"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, iris[,1:4])
+# summarize the transformed dataset
+summary(transformed)
+```
+
+#### Center
+
+The center transform calculates the mean for an variable and subtracts it from each value.
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(iris[,1:4], method=c("center"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, iris[,1:4])
+# summarize the transformed dataset
+summary(transformed)
+```
+
+#### Standardize
+
+Combining the scale and center transforms will standardize our data. variables will have a mean value of 0 and a standard deviation of 1. Notice how we can list multiple methods in a list when specifying the preProcess argument to the *train()* function.
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(iris[,1:4], method=c("center", "scale"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, iris[,1:4])
+# summarize the transformed dataset
+summary(transformed)
+```
+
+#### Normalize
+
+Data values can be scaled into the range of [0, 1] which is called normalization.
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(iris[,1:4], method=c("range"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, iris[,1:4])
+# summarize the transformed dataset
+summary(transformed)
+```
+
+#### Box-Cox
+
+When an variable has a Gaussian-like distribution but is shifted, this is called a skew. The distribution of an variable can be shifted to reduce the skew and make it more Gaussian. The BoxCox transform can perform this operation (assumes all values are positive). Notice, we applied the transform to only two variables that appear to have a skew.
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(PimaIndiansDiabetes[,7:8], method=c("BoxCox"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, PimaIndiansDiabetes[,7:8])
+# summarize the transformed dataset (note pedigree and age)
+summary(transformed)
+```
+
+#### Yeo-Johnson
+
+The YeoJohnson transform another power-transform like Box-Cox, but it supports raw values that are equal to zero and negative. 
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(PimaIndiansDiabetes[,7:8], method=c("YeoJohnson"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, PimaIndiansDiabetes[,7:8])
+# summarize the transformed dataset (note pedigree and age)
+summary(transformed)
+```
+
+#### Principal Component Analysis
+
+The PCA transforms the data to return only the principal components, a technique from multivariate statistics and linear algebra. The transform keeps those components above the variance threshold (default=0.95) or the number of components can be specified (pcaComp). The result is variables that are uncorrelated, useful for algorithms like linear and generalized linear regression. Notice that when we run the recipe that only two principal components are selected.
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(iris, method=c("center", "scale", "pca"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, iris)
+# summarize the transformed dataset
+summary(transformed)
+
+```
+
+#### Independent Component Analysis
+
+Transform the data to the independent components. Unlike PCA, ICA retains those components that are independent. We must specify the number of desired independent components with the n.comp argument. This transform may be useful for algorithms such as Naive Bayes. 
+
+```{r}
+# calculate the pre-process parameters from the dataset
+preprocessParams = preProcess(iris, method=c("center", "scale", "pca"))
+# summarize transform parameters
+print(preprocessParams)
+# transform the dataset using the parameters
+transformed = predict(preprocessParams, iris)
+# summarize the transformed dataset
+summary(transformed)
+```

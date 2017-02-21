@@ -1,0 +1,163 @@
+---
+title: "Tuning Machine Learning Algorithms"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+library(randomForest)
+
+```
+
+### Loading Sonars
+
+```{r echo=TRUE}
+data(Sonar)
+x = Sonar[,1:60]
+y = Sonar[,61]
+```
+
+#### Test setup
+
+We will use the popular Random Forest algorithm as the subject of our algorithm tuning. When tuning an algorithm, it is important to have a good understanding of your algorithm so that you know what effect the parameters have on the model you are creating. In this case study, we will stick to tuning two parameters, namely the mtry and the ntree parameters that have the following effect on our Random Forest model. There are many other parameters, but these two parameters are perhaps the most likely to have the biggest effect on your final accuracy.
+
+Direct from the help page for the randomForest() function in R:
+
+* mtry: Number of variables randomly sampled as candidates at each split.
+
+* ntree: Number of trees to grow.
+
+Let’s create a baseline for comparison by using the recommended defaults for each parameter and mtry=floor(sqrt(ncol(x))) or mtry=7 and ntree=500.
+
+```{r}
+# Create model with default paramters
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
+seed = 7
+metric = "Accuracy"
+set.seed(seed)
+mtry = sqrt(ncol(x))
+tunegrid = expand.grid(.mtry=mtry)
+rfDefault = train(Class~., data=Sonar, method="rf", metric=metric, tuneGrid=tunegrid,
+    trControl=trainControl)
+print(rfDefault)
+```
+
+#### Tune with caret
+
+Not all machine learning algorithms are available in caret for tuning. The choice of parameters is left to the developers of the package, namely Max Kuhn. Only those algorithm parameters that have a large effect (e.g. really require tuning in Kuhn’s opinion) are available for tuning in caret. As such, only the mtry parameter is available for tuning in caret. The reason is its effect on the final accuracy and that it must be found empirically for a dataset. The ntree parameter is different in that it can be as large as you like, and continues to increase the accuracy up to some point. It is less difficult or critical to tune and could be limited by compute time available more than anything.
+
+##### Random search
+
+One search strategy that we can use is to try random values within a range. This can be good if we are unsure of what the value might be and we want to overcome any biases we may have for setting the parameter (like the suggested equation above). Note, that we are using a test harness similar to that which we would use to spot-check algorithms. Both 10-fold cross validation and 3 repeats slows down the search process, but is intended to limit and reduce overfitting on the training dataset. It won’t remove overfitting entirely. Holding back a validation set for final checking is a great idea if you can spare the data.
+
+```{r}
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3, search="random")
+set.seed(seed)
+mtry = sqrt(ncol(x))
+rfRandom = train(Class~., data=Sonar, method="rf", metric=metric, tuneLength=15,
+    trControl=trainControl)
+print(rfRandom)
+plot(rfRandom)
+```
+
+##### Grid search
+
+Another search you can use is to define a grid of algorithm parameters to try. Each axis of the grid is an algorithm parameter, and points in the grid are specific combinations of parameters. Because we are only tuning one parameter, the grid search is a linear search through a vector of candidate values.
+```{r}
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+set.seed(seed)
+tunegrid = expand.grid(.mtry=c(1:15))
+rfGrid = train(Class~., data=Sonar, method="rf", metric=metric, tuneGrid=tunegrid,
+    trControl=trainControl)
+print(rfGrid)
+plot(rfGrid)
+```
+
+#### Tune with algorithm tools
+
+Some algorithm implementations provide tools for tuning the parameters of the algorithm. For example, the Random Forest algorithm implementation in the randomForest package provides the tuneRF() function that searches for optimal mtry values given your data.
+
+```{r}
+# Algorithm Tune (tuneRF)
+set.seed(seed)
+bestmtry = tuneRF(x, y, stepFactor=1.5, improve=1e-5, ntree=500)
+print(bestmtry)
+```
+
+#### Custome parameter Search
+
+Often you want to search for both the parameters that must be tuned and the those that need to be scaled or adapted more generally for your dataset. You have to craft your own parameter search. Two popular recommendations are:
+
+* Tune Manually: Write R code to create lots of models and compare their accuracy using caret.
+
+* Extend Caret: Create an extension to caret that adds in additional parameters to caret for the algorithm you want to tune.
+
+##### Tune manual
+
+We want to keep using caret because it provides a direct point of comparison to our previous models (apples to apples, even the same data splits) and because of the repeated cross validation test harness that we like as it reduces the severity of overfitting. One approach is to create many caret models for our algorithm and pass in a different set of parameters directly to the algorithm manually. Let’s look at an example doing this to evaluate different values for ntree while holding mtry constant. You can see that the most accurate value for ntree was perhaps 2,000 with a mean accuracy of 82.02% (a lift over our very first experiment using the default mtry value). The results perhaps suggest an optimal value for ntree between 2,000 and 2,500. Also note, we held mtry constant at the default value. We could repeat the experiment with a possible better mtry=2 from the experiment above, or try combinations of ntree and mtry in case their effects on the algorithm and the result interact with each other.
+```{r}
+# Manual Search
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3, search="grid")
+tunegrid = expand.grid(.mtry=c(sqrt(ncol(x))))
+modellist = list()
+for (ntree in c(1000, 1500, 2000, 2500)) {
+  set.seed(seed)
+  fit = train(Class~., data=Sonar, method="rf", metric=metric, tuneGrid=tunegrid,
+      trControl=trainControl, ntree=ntree)
+  key = toString(ntree)
+  modellist[[key]] = fit
+}
+# compare results
+results = resamples(modellist)
+summary(results)
+dotplot(results)
+```
+
+##### Extend caret
+
+Another approach is to create a new algorithm for caret to support. This is the same Random Forest algorithm you have been using, only modified so that it supports the tuning of multiple parameters. A risk with this approach is that the caret native support for the algorithm has additional or fancy code wrapping it that subtly but importantly changes its behavior. You may need to repeat prior experiments with your custom algorithm support. We can define our own algorithm to use in caret by defining a list that contains a number of custom named elements that the caret package looks for, such as how to fit and how to predict. See below for a definition of a custom random forest algorithm for use with caret that takes both an mtry and ntree parameters.
+
+```{r}
+customRF = list(type="Classification", library="randomForest", loop=NULL)
+customRF$parameters = data.frame(parameter=c("mtry", "ntree"), class=rep("numeric", 2),
+    label=c("mtry", "ntree"))
+customRF$grid = function(x, y, len=NULL, search="grid") {}
+customRF$fit = function(x, y, wts, param, lev, last, weights, classProbs, ...) {
+  randomForest(x, y, mtry=param$mtry, ntree=param$ntree, ...)
+}
+customRF$predict = function(modelFit, newdata, preProc=NULL, submodels=NULL)
+   predict(modelFit, newdata)
+customRF$prob = function(modelFit, newdata, preProc=NULL, submodels=NULL)
+   predict(modelFit, newdata, type = "prob")
+customRF$sort = function(x) x[order(x[,1]),]
+customRF$levels = function(x) x$classes
+```
+
+Now, let’s make use of this custom list in our call to the caret train function, and try tuning different values for ntree and mtry. This may take a minute or two to run. You can see that the most accurate values for ntree and mtry were 2,000 and 2 with an accuracy of 84.43%. We do perhaps see some interaction effects between the number of trees and the value of ntree. Nevertheless, if we had chosen the best value for mtry found using grid search of 2 (above) and the best value of ntree found using grid search of 2,000 (above), in this case we would have achieved the same level of tuning found in this combined search. This is a nice confirmation.
+
+```{r}
+# train model
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
+tunegrid = expand.grid(.mtry=c(1:15), .ntree=c(1000, 1500, 2000, 2500))
+set.seed(seed)
+custom = train(Class~., data=Sonar, method=customRF, metric=metric, tuneGrid=tunegrid,
+    trControl=trainControl)
+summary(custom)
+plot(custom)
+```
+
+

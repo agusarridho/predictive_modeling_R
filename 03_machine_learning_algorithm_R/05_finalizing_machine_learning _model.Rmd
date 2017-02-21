@@ -1,0 +1,102 @@
+---
+title: "Finalizing Machine Learning Model"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependenciesn
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(BostonHousing) # regression problem
+data(PimaIndiansDiabetes) # classification problem
+```
+
+#### Make predictions on new data
+
+You can make new predictions using a model you have tuned using caret with the predict.train() function. In the recipe below, the dataset is split into a validation dataset and a training dataset. The validation dataset could just as easily be a new dataset stored in a separate file and loaded as a data frame. A good model of the Pima indians dataset is LDA. We can see that caret provides access to the best model from a training run in the finalModel variable. We can use that model to make predictions by calling predict using the fit from train() which will automatically use the final model. We must specify the data on which to make predictions via the newdata argument.
+
+```{r}
+# create 80%/20% for training and validation datasets
+set.seed(9)
+validationIndex <- createDataPartition(PimaIndiansDiabetes$diabetes, p=0.80, list=FALSE)
+validation <- PimaIndiansDiabetes[-validationIndex,]
+training <- PimaIndiansDiabetes[validationIndex,]
+# train a model and summarize model
+set.seed(9)
+trainControl <- trainControl(method="cv", number=10)
+fit.lda <- train(diabetes~., data=training, method="lda", metric="Accuracy",
+    trControl=trainControl)
+print(fit.lda)
+print(fit.lda$finalModel)
+# estimate skill on validation dataset
+set.seed(9)
+predictions <- predict(fit.lda, newdata=validation)
+confusionMatrix(predictions, validation$diabetes)
+```
+
+#### Create a standalone model
+
+In this example, we have tuned a Random Forest with three different values for mtry and ntree set to 2,000. By printing the fit and the finalModel, we can see that the most accurate value for mtry was 2. Now that we know a good algorithm (Random Forest) and the good configuration (mtry=2, ntree=2000) we can create the final model directly using all of the training data. We can lookup the rf Random Forest implementation used by caret and note that it is using the randomForest package and in turn the randomForest() function. The example creates a new model directly and uses it to make predictions on the new data, this case simulated with the verification dataset.
+
+Some simpler models, like linear models can output their coe cients. This is useful, because from these, you can implement the simple prediction procedure in your programming language of choice and use the coe cients to get the same accuracy. This gets more di cult as the complexity of the representation used by the algorithm increases.
+
+```{r}
+# create 80%/20% for training and validation datasets
+validationIndex <- createDataPartition(Sonar$Class, p=0.80, list=FALSE)
+validation <- Sonar[-validationIndex,]
+training <- Sonar[validationIndex,]
+
+# train a model and summarize model
+set.seed(7)
+trainControl <- trainControl(method="repeatedcv", number=10, repeats=3)
+fit.rf <- train(Class~., data=training, method="rf", metric="Accuracy",
+    trControl=trainControl, ntree=2000)
+print(fit.rf)
+print(fit.rf$finalModel)
+# create standalone model using all training data
+set.seed(7)
+finalModel <- randomForest(Class~., training, mtry=2, ntree=2000)
+# make a predictions on "new data" using the final model
+finalPredictions <- predict(finalModel, validation[,1:60])
+confusionMatrix(finalPredictions, validation$Class)
+```
+
+#### Save and load your model
+
+You can save your best models to a file so that you can load them up later and make predictions. In this example we split the Sonar dataset into a training dataset and a validation dataset. We take our validation dataset as new data to test our final model. We train the final model using the training dataset and our optimal parameters, then save it to a file called finalModel.rds in the local working directory. The model is serialized. It can be loaded at a later time by calling the readRDS() function and assigning the object that is loaded (in this case a Random Forest fit) to a variable name. The loaded Random Forest is then used to make predictions on new data, in this case the validation dataset.
+
+```{r}
+# create 80%/20% for training and validation datasets
+validationIndex <- createDataPartition(Sonar$Class, p=0.80, list=FALSE)
+validation <- Sonar[-validationIndex,]
+training <- Sonar[validationIndex,]
+# create final standalone model using all training data
+set.seed(7)
+finalModel <- randomForest(Class~., training, mtry=2, ntree=2000)
+# save the model to disk
+saveRDS(finalModel, "./finalModel.rds")
+# later...
+# load the model
+superModel <- readRDS("./finalModel.rds")
+print(superModel)
+# make a predictions on "new data" using the final model
+finalPredictions <- predict(superModel, validation[,1:60])
+confusionMatrix(finalPredictions, validation$Class)
+```

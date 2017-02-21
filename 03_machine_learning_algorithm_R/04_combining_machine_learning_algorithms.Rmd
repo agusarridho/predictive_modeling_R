@@ -1,0 +1,146 @@
+---
+title: "Combining Machine Learning Algorithms"
+output: html_notebook
+author: "Agus Nur Hidayat"
+---
+
+### Preparing packages and their dependencies
+
+```{r}
+install.packages("lazyeval")
+install.packages("lattice")
+install.packages("ggplot2")
+install.packages("caret", dependencies = c("Depends", "Suggests"))
+install.packages("mlbench")
+```
+
+### Loading libraries
+
+```{r echo=T}
+library(caret)
+library(mlbench)
+library(randomForest)
+
+```
+
+### Loading datasets
+
+```{r echo=TRUE}
+data(Ionosphere)
+dataset = Ionosphere
+dataset = dataset[,-2]
+dataset$V1 = as.numeric(as.character(dataset$V1))
+```
+
+### Boosting Algorithms
+
+We can look at two of the most popular boosting machine learning algorithms:
+
+* C5.0
+
+* Stochastic Gradient Boosting
+
+Below is an example of the C5.0 and Stochastic Gradient Boosting (using the Gradient Boosting Modeling implementation) algorithms in R. Both algorithms include parameters that could be tuned as previously discussed.
+```{r}
+# Example of Boosting Algorithms
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
+seed = 7
+metric = "Accuracy"
+# C5.0
+set.seed(seed)
+fit.c50 = train(Class~., data=dataset, method="C5.0", metric=metric,
+    trControl=trainControl)
+# Stochastic Gradient Boosting
+set.seed(seed)
+fit.gbm = train(Class~., data=dataset, method="gbm", metric=metric,
+    trControl=trainControl, verbose=FALSE)
+# summarize results
+boostingResults = resamples(list(c5.0=fit.c50, gbm=fit.gbm))
+summary(boostingResults)
+dotplot(boostingResults)
+```
+
+### Bagging Algorithms
+
+Let’s look at two of the most popular bagging machine learning algorithms:
+
+* Bagged CART
+
+* Random Forest
+
+Below is an example of the Bagged CART and Random Forest algorithms in R. Both algorithms include parameters that are not tuned in this example.
+
+```{r}
+# Example of Bagging algorithms
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
+seed = 7
+metric = "Accuracy"
+# Bagged CART
+set.seed(seed)
+fit.treebag = train(Class~., data=dataset, method="treebag", metric=metric,
+    trControl=trainControl)
+# Random Forest
+set.seed(seed)
+fit.rf = train(Class~., data=dataset, method="rf", metric=metric, trControl=trainControl)
+# summarize results
+baggingResults = resamples(list(treebag=fit.treebag, rf=fit.rf))
+summary(baggingResults)
+dotplot(baggingResults)
+```
+
+### Stacking Algorithms
+
+You can combine the predictions of multiple caret models using the caretEnsemble package. Given a list of caret models, the caretStack() function can be used to specify a higher-order model to learn how to best combine together the predictions of sub-models. Let’s first look at creating five sub-models for the ionosphere dataset, specifically:
+
+* Linear Discriminate Analysis (LDA).
+
+* Classification and Regression Trees (CART).
+
+* Logistic Regression (via Generalized Linear Model or GLM). 
+
+* k-Nearest Neighbors (KNN).
+
+* Support Vector Machine with a Radial Basis Kernel Function (SVM).
+
+Below is an example that creates these five sub-models. Note the new helpful caretList() function provided by the caretEnsemble package for creating a list of standard caret models.
+```{r}
+# Example of Stacking algorithms
+# create submodels
+trainControl = trainControl(method="repeatedcv", number=10, repeats=3,
+    savePredictions=TRUE, classProbs=TRUE)
+algorithmList = c( lda ,  rpart ,  glm ,  knn ,  svmRadial )
+set.seed(seed)
+models = caretList(Class~., data=dataset, trControl=trainControl, methodList=algorithmList)
+results = resamples(models)
+summary(results)
+dotplot(results)
+```
+
+When we combine the predictions of different models using stacking, it is desirable that the predictions made by the sub-models have low correlation. This would suggest that the models are skillful but in different ways, allowing a new classifier to figure out how to get the best from each model for an improved score. If the predictions for the sub-models were highly corrected (> 0.75) then they would be making the same or very similar predictions most of the time reducing the benefit of combining the predictions.
+
+```{r}
+# correlation between results
+modelCor(results)
+splom(results)
+```
+
+We can see that all pairs of predictions have generally low correlation. The two methods with the highest correlation between their predictions are Logistic Regression (GLM) and KNN at 0.517 correlation which is not considered high (> 0.75). Let’s combine the predictions of the classifiers using a simple linear model.
+
+```{r}
+# stack using glm
+stackControl = trainControl(method="repeatedcv", number=10, repeats=3,
+    savePredictions=TRUE, classProbs=TRUE)
+set.seed(seed)
+stack.glm = caretStack(models, method="glm", metric="Accuracy", trControl=stackControl)
+print(stack.glm)
+```
+
+We can also use more sophisticated algorithms to combine predictions in an effort to tease out when best to use the different methods. In this case, we use the Random Forest algorithm to combine the predictions.
+
+```{r}
+# stack using random forest
+set.seed(seed)
+stack.rf = caretStack(models, method="rf", metric="Accuracy", trControl=stackControl)
+print(stack.rf)
+```
+
