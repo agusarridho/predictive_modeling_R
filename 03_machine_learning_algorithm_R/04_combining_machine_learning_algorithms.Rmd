@@ -12,6 +12,8 @@ install.packages("lattice")
 install.packages("ggplot2")
 install.packages("caret", dependencies = c("Depends", "Suggests"))
 install.packages("mlbench")
+install.packages("ipred")
+install.packages("caretEnsemble")
 ```
 
 ### Loading libraries
@@ -20,7 +22,8 @@ install.packages("mlbench")
 library(caret)
 library(mlbench)
 library(randomForest)
-
+library(ipred)
+library(caretEnsemble)
 ```
 
 ### Loading datasets
@@ -108,7 +111,7 @@ Below is an example that creates these five sub-models. Note the new helpful car
 # create submodels
 trainControl = trainControl(method="repeatedcv", number=10, repeats=3,
     savePredictions=TRUE, classProbs=TRUE)
-algorithmList = c( lda ,  rpart ,  glm ,  knn ,  svmRadial )
+algorithmList = c("lda", "rpart",  "glm", "knn", "svmRadial")
 set.seed(seed)
 models = caretList(Class~., data=dataset, trControl=trainControl, methodList=algorithmList)
 results = resamples(models)

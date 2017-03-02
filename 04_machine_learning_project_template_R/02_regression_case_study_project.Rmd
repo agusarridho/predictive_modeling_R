@@ -351,8 +351,7 @@ valY = validation[,14]
 # use final model to make predictions on the validation dataset
 predictions = predict(finalModel, newdata=trans_valX, neighbors=3)
 # calculate RMSE
-rmse = RMSE(predictions, valY)
-r2 = R2(predictions, valY)
+rmse = sqrt(mean((predictions-valY)^2))
 print(rmse)
 ```
 

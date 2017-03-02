@@ -135,38 +135,44 @@ for(i in 1:9) {
 
 #### Evaluating algorithms
 
+```{r}
+# remove missing values from the dataset
+datasetNoMissing = dataset[complete.cases(dataset),]
+```
+
+
 ##### Baseline
 
 ```{r}
 # 10-fold cross validation with 3 repeats
-trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
-metric = "Accuracy"
+trainControl <- trainControl(method="repeatedcv", number=10, repeats=3)
+metric <- "Accuracy"
 ```
 
 ```{r}
 # LG
 set.seed(7)
-fit.glm = train(Class~., data=dataset, method="glm", metric=metric, trControl=trainControl)
+fit.glm <- train(Class~., data=datasetNoMissing, method="glm", metric=metric, trControl=trainControl)
 # LDA
 set.seed(7)
-fit.lda = train(Class~., data=dataset, method="lda", metric=metric, trControl=trainControl)
+fit.lda <- train(Class~., data=datasetNoMissing, method="lda", metric=metric, trControl=trainControl)
 # GLMNET
 set.seed(7)
-fit.glmnet = train(Class~., data=dataset, method="glmnet", metric=metric,
+fit.glmnet <- train(Class~., data=datasetNoMissing, method="glmnet", metric=metric,
     trControl=trainControl)
 # KNN
 set.seed(7)
-fit.knn = train(Class~., data=dataset, method="knn", metric=metric, trControl=trainControl)
+fit.knn <- train(Class~., data=datasetNoMissing, method="knn", metric=metric, trControl=trainControl)
 # CART
 set.seed(7)
-fit.cart = train(Class~., data=dataset, method="rpart", metric=metric,
+fit.cart <- train(Class~., data=datasetNoMissing, method="rpart", metric=metric,
     trControl=trainControl)
 # Naive Bayes
 set.seed(7)
-fit.nb = train(Class~., data=dataset, method="nb", metric=metric, trControl=trainControl)
+fit.nb <- train(Class~., data=datasetNoMissing, method="nb", metric=metric, trControl=trainControl)
 # SVM
 set.seed(7)
-fit.svm = train(Class~., data=dataset, method="svmRadial", metric=metric,
+fit.svm <- train(Class~., data=datasetNoMissing, method="svmRadial", metric=metric,
     trControl=trainControl)
 ```
 
@@ -189,31 +195,31 @@ metric = "Accuracy"
 ```{r}
 # LG
 set.seed(7)
-fit.glm = train(Class~., data=dataset, method="glm", metric=metric, preProc=c("BoxCox"),
+fit.glm = train(Class~., data=datasetNoMissing, method="glm", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl)
 # LDA
 set.seed(7)
-fit.lda = train(Class~., data=dataset, method="lda", metric=metric, preProc=c("BoxCox"),
+fit.lda = train(Class~., data=datasetNoMissing, method="lda", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl)
 # GLMNET
 set.seed(7)
-fit.glmnet = train(Class~., data=dataset, method="glmnet", metric=metric,
+fit.glmnet = train(Class~., data=datasetNoMissing, method="glmnet", metric=metric,
     preProc=c("BoxCox"), trControl=trainControl)
 # KNN
 set.seed(7)
-fit.knn = train(Class~., data=dataset, method="knn", metric=metric, preProc=c("BoxCox"),
+fit.knn = train(Class~., data=datasetNoMissing, method="knn", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl)
 # CART
 set.seed(7)
-fit.cart = train(Class~., data=dataset, method="rpart", metric=metric,
+fit.cart = train(Class~., data=datasetNoMissing, method="rpart", metric=metric,
     preProc=c("BoxCox"), trControl=trainControl)
 # Naive Bayes
 set.seed(7)
-fit.nb = train(Class~., data=dataset, method="nb", metric=metric, preProc=c("BoxCox"),
+fit.nb = train(Class~., data=datasetNoMissing, method="nb", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl)
 # SVM
 set.seed(7)
-fit.svm = train(Class~., data=dataset, method="svmRadial", metric=metric,
+fit.svm = train(Class~., data=datasetNoMissing, method="svmRadial", metric=metric,
     preProc=c("BoxCox"), trControl=trainControl)
 ```
 
@@ -236,7 +242,7 @@ trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
 metric = "Accuracy"
 set.seed(7)
 grid = expand.grid(.sigma=c(0.025, 0.05, 0.1, 0.15), .C=seq(1, 10, by=1))
-fit.svm = train(Class~., data=dataset, method="svmRadial", metric=metric, tuneGrid=grid,
+fit.svm = train(Class~., data=datasetNoMissing, method="svmRadial", metric=metric, tuneGrid=grid,
     preProc=c("BoxCox"), trControl=trainControl)
 print(fit.svm)
 plot(fit.svm)
@@ -249,7 +255,7 @@ trainControl = trainControl(method="repeatedcv", number=10, repeats=3)
 metric = "Accuracy"
 set.seed(7)
 grid = expand.grid(.k=seq(1,20,by=1))
-fit.knn = train(Class~., data=dataset, method="knn", metric=metric, tuneGrid=grid,
+fit.knn = train(Class~., data=datasetNoMissing, method="knn", metric=metric, tuneGrid=grid,
     preProc=c("BoxCox"), trControl=trainControl)
 print(fit.knn)
 plot(fit.knn)
@@ -266,19 +272,19 @@ metric = "Accuracy"
 ```{r}
 # Bagged CART
 set.seed(7)
-fit.treebag = train(Class~., data=dataset, method="treebag", metric=metric,
+fit.treebag = train(Class~., data=datasetNoMissing, method="treebag", metric=metric,
     trControl=trainControl)
 # Random Forest
 set.seed(7)
-fit.rf = train(Class~., data=dataset, method="rf", metric=metric, preProc=c("BoxCox"),
+fit.rf = train(Class~., data=datasetNoMissing, method="rf", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl)
 # Stochastic Gradient Boosting
 set.seed(7)
-fit.gbm = train(Class~., data=dataset, method="gbm", metric=metric, preProc=c("BoxCox"),
+fit.gbm = train(Class~., data=datasetNoMissing, method="gbm", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl, verbose=FALSE)
 # C5.0
 set.seed(7)
-fit.c50 = train(Class~., data=dataset, method="C5.0", metric=metric, preProc=c("BoxCox"),
+fit.c50 = train(Class~., data=datasetNoMissing, method="C5.0", metric=metric, preProc=c("BoxCox"),
     trControl=trainControl)
 ```
 
@@ -294,7 +300,6 @@ dotplot(ensembleResults)
 ```{r}
 # prepare parameters for data transform
 set.seed(7)
-datasetNoMissing = dataset[complete.cases(dataset),]
 x = datasetNoMissing[,1:9]
 preprocessParams = preProcess(x, method=c("BoxCox"))
 x = predict(preprocessParams, x)

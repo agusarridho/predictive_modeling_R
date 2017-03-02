@@ -6,8 +6,6 @@ author: "Agus Nur Hidayat"
 
 ### Preparing packages and their dependencies
 
-Below is the list of packages that we will have to load to run this notebook:
-
 ```{r}
 install.packages("lazyeval")
 install.packages("lattice")

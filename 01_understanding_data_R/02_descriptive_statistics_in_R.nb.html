@@ -176,13 +176,36 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <div id="preparing-packages-and-their-dependencies" class="section level3">
 <h3>Preparing packages and their dependencies</h3>
-<p>Below is the list of packages that we will have to load to run this notebook:</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyhcIm1sYmVuY2hcIilcbmluc3RhbGwucGFja2FnZXMoXCJlMTA3MVwiKVxuYGBgIn0= -->
-<pre class="r"><code>install.packages(&quot;mlbench&quot;)
-install.packages(&quot;e1071&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyhcIm1sYmVuY2hcIilcbmBgYCJ9 -->
+<pre class="r"><code>install.packages(&quot;mlbench&quot;)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoidHJ5aW5nIFVSTCAnaHR0cHM6Ly9jcmFuLnJzdHVkaW8uY29tL2Jpbi9tYWNvc3gvbWF2ZXJpY2tzL2NvbnRyaWIvMy4zL21sYmVuY2hfMi4xLTEudGd6J1xuQ29udGVudCB0eXBlICdhcHBsaWNhdGlvbi94LWd6aXAnIGxlbmd0aCAxMDIxMzQyIGJ5dGVzICg5OTcgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA5OTcgS0JcbiJ9 -->
+<pre><code>trying URL 'https://cran.rstudio.com/bin/macosx/mavericks/contrib/3.3/mlbench_2.1-1.tgz'
+Content type 'application/x-gzip' length 1021342 bytes (997 KB)
+==================================================
+downloaded 997 KB</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5UaGUgZG93bmxvYWRlZCBiaW5hcnkgcGFja2FnZXMgYXJlIGluXG5cdC92YXIvZm9sZGVycy9xYy83bm50eGRyNTBycWNzODR0MmQ3dzdiamMwMDAwZ24vVC8vUnRtcGpEOEZTaC9kb3dubG9hZGVkX3BhY2thZ2VzXG4ifQ== -->
+<pre><code>
+The downloaded binary packages are in
+    /var/folders/qc/7nntxdr50rqcs84t2d7w7bjc0000gn/T//RtmpjD8FSh/downloaded_packages</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zdGFsbC5wYWNrYWdlcyhcImUxMDcxXCIpXG5gYGAifQ== -->
+<pre class="r"><code>install.packages(&quot;e1071&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoidHJ5aW5nIFVSTCAnaHR0cHM6Ly9jcmFuLnJzdHVkaW8uY29tL2Jpbi9tYWNvc3gvbWF2ZXJpY2tzL2NvbnRyaWIvMy4zL2UxMDcxXzEuNi04LnRneidcbkNvbnRlbnQgdHlwZSAnYXBwbGljYXRpb24veC1nemlwJyBsZW5ndGggNzQyNzc5IGJ5dGVzICg3MjUgS0IpXG49PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PVxuZG93bmxvYWRlZCA3MjUgS0JcbiJ9 -->
+<pre><code>trying URL 'https://cran.rstudio.com/bin/macosx/mavericks/contrib/3.3/e1071_1.6-8.tgz'
+Content type 'application/x-gzip' length 742779 bytes (725 KB)
+==================================================
+downloaded 725 KB</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiXG5UaGUgZG93bmxvYWRlZCBiaW5hcnkgcGFja2FnZXMgYXJlIGluXG5cdC92YXIvZm9sZGVycy9xYy83bm50eGRyNTBycWNzODR0MmQ3dzdiamMwMDAwZ24vVC8vUnRtcGpEOEZTaC9kb3dubG9hZGVkX3BhY2thZ2VzXG4ifQ== -->
+<pre><code>
+The downloaded binary packages are in
+    /var/folders/qc/7nntxdr50rqcs84t2d7w7bjc0000gn/T//RtmpjD8FSh/downloaded_packages</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -190,10 +213,15 @@ install.packages(&quot;e1071&quot;)</code></pre>
 <h3>Loading libraries</h3>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShtbGJlbmNoKVxubGlicmFyeShlMTA3MSkgIyBmb3Igc2tld25lc3NcbmxpYnJhcnkobm9ydGVzdCkgIyBmb3IgYW5kZXJzb24gZGFybGluZ1xuYGBgIn0= -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShtbGJlbmNoKVxubGlicmFyeShlMTA3MSkgIyBmb3Igc2tld25lc3NcbmBgYCJ9 -->
 <pre class="r"><code>library(mlbench)
-library(e1071) # for skewness
-library(nortest) # for anderson darling</code></pre>
+library(e1071) # for skewness</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicGFja2FnZSDigJhlMTA3MeKAmSB3YXMgYnVpbHQgdW5kZXIgUiB2ZXJzaW9uIDMuMy4yXG4ifQ== -->
+<pre><code>package ‘e1071’ was built under R version 3.3.2</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShub3J0ZXN0KSAjIGZvciBhbmRlcnNvbiBkYXJsaW5nXG5gYGAifQ== -->
+<pre class="r"><code>library(nortest) # for anderson darling</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -219,6 +247,10 @@ library(nortest) # for anderson darling</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2FwcGx5KFBpbWFJbmRpYW5zRGlhYmV0ZXMsIGNsYXNzKVxuYGBgIn0= -->
 <pre class="r"><code>sapply(PimaIndiansDiabetes, class)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiIHByZWduYW50ICAgZ2x1Y29zZSAgcHJlc3N1cmUgICB0cmljZXBzICAgaW5zdWxpbiAgICAgIG1hc3MgIHBlZGlncmVlICAgICAgIGFnZSAgZGlhYmV0ZXMgXG5cIm51bWVyaWNcIiBcIm51bWVyaWNcIiBcIm51bWVyaWNcIiBcIm51bWVyaWNcIiBcIm51bWVyaWNcIiBcIm51bWVyaWNcIiBcIm51bWVyaWNcIiBcIm51bWVyaWNcIiAgXCJmYWN0b3JcIiBcbiJ9 -->
+<pre><code> pregnant   glucose  pressure   triceps   insulin      mass  pedigree       age  diabetes 
+&quot;numeric&quot; &quot;numeric&quot; &quot;numeric&quot; &quot;numeric&quot; &quot;numeric&quot; &quot;numeric&quot; &quot;numeric&quot; &quot;numeric&quot;  &quot;factor&quot; </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -231,6 +263,11 @@ library(nortest) # for anderson darling</code></pre>
 <pre class="r"><code>y = PimaIndiansDiabetes$diabetes
 cbind(freq=table(y), percent=round(prop.table(table(y)),2))</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgIGZyZXEgcGVyY2VudFxubmVnICA1MDAgICAgMC42NVxucG9zICAyNjggICAgMC4zNVxuIn0= -->
+<pre><code>    freq percent
+neg  500    0.65
+pos  268    0.35</code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -242,6 +279,22 @@ cbind(freq=table(y), percent=round(prop.table(table(y)),2))</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeShQaW1hSW5kaWFuc0RpYWJldGVzKVxuYGBgIn0= -->
 <pre class="r"><code>summary(PimaIndiansDiabetes)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgIHByZWduYW50ICAgICAgICAgZ2x1Y29zZSAgICAgICAgIHByZXNzdXJlICAgICAgICAgdHJpY2VwcyAgICAgICAgIGluc3VsaW4gICAgICAgICAgIG1hc3MgICAgICAgICAgcGVkaWdyZWUgICAgICAgICAgIGFnZSAgICAgICBcbiBNaW4uICAgOiAwLjAwMCAgIE1pbi4gICA6ICAwLjAgICBNaW4uICAgOiAgMC4wMCAgIE1pbi4gICA6IDAuMDAgICBNaW4uICAgOiAgMC4wICAgTWluLiAgIDogMC4wMCAgIE1pbi4gICA6MC4wNzgwICAgTWluLiAgIDoyMS4wMCAgXG4gMXN0IFF1LjogMS4wMDAgICAxc3QgUXUuOiA5OS4wICAgMXN0IFF1LjogNjIuMDAgICAxc3QgUXUuOiAwLjAwICAgMXN0IFF1LjogIDAuMCAgIDFzdCBRdS46MjcuMzAgICAxc3QgUXUuOjAuMjQzNyAgIDFzdCBRdS46MjQuMDAgIFxuIE1lZGlhbiA6IDMuMDAwICAgTWVkaWFuIDoxMTcuMCAgIE1lZGlhbiA6IDcyLjAwICAgTWVkaWFuIDoyMy4wMCAgIE1lZGlhbiA6IDMwLjUgICBNZWRpYW4gOjMyLjAwICAgTWVkaWFuIDowLjM3MjUgICBNZWRpYW4gOjI5LjAwICBcbiBNZWFuICAgOiAzLjg0NSAgIE1lYW4gICA6MTIwLjkgICBNZWFuICAgOiA2OS4xMSAgIE1lYW4gICA6MjAuNTQgICBNZWFuICAgOiA3OS44ICAgTWVhbiAgIDozMS45OSAgIE1lYW4gICA6MC40NzE5ICAgTWVhbiAgIDozMy4yNCAgXG4gM3JkIFF1LjogNi4wMDAgICAzcmQgUXUuOjE0MC4yICAgM3JkIFF1LjogODAuMDAgICAzcmQgUXUuOjMyLjAwICAgM3JkIFF1LjoxMjcuMiAgIDNyZCBRdS46MzYuNjAgICAzcmQgUXUuOjAuNjI2MiAgIDNyZCBRdS46NDEuMDAgIFxuIE1heC4gICA6MTcuMDAwICAgTWF4LiAgIDoxOTkuMCAgIE1heC4gICA6MTIyLjAwICAgTWF4LiAgIDo5OS4wMCAgIE1heC4gICA6ODQ2LjAgICBNYXguICAgOjY3LjEwICAgTWF4LiAgIDoyLjQyMDAgICBNYXguICAgOjgxLjAwICBcbiBkaWFiZXRlcyBcbiBuZWc6NTAwICBcbiBwb3M6MjY4ICBcbiAgICAgICAgICBcbiAgICAgICAgICBcbiAgICAgICAgICBcbiAgICAgICAgICBcbiJ9 -->
+<pre><code>    pregnant         glucose         pressure         triceps         insulin           mass          pedigree           age       
+ Min.   : 0.000   Min.   :  0.0   Min.   :  0.00   Min.   : 0.00   Min.   :  0.0   Min.   : 0.00   Min.   :0.0780   Min.   :21.00  
+ 1st Qu.: 1.000   1st Qu.: 99.0   1st Qu.: 62.00   1st Qu.: 0.00   1st Qu.:  0.0   1st Qu.:27.30   1st Qu.:0.2437   1st Qu.:24.00  
+ Median : 3.000   Median :117.0   Median : 72.00   Median :23.00   Median : 30.5   Median :32.00   Median :0.3725   Median :29.00  
+ Mean   : 3.845   Mean   :120.9   Mean   : 69.11   Mean   :20.54   Mean   : 79.8   Mean   :31.99   Mean   :0.4719   Mean   :33.24  
+ 3rd Qu.: 6.000   3rd Qu.:140.2   3rd Qu.: 80.00   3rd Qu.:32.00   3rd Qu.:127.2   3rd Qu.:36.60   3rd Qu.:0.6262   3rd Qu.:41.00  
+ Max.   :17.000   Max.   :199.0   Max.   :122.00   Max.   :99.00   Max.   :846.0   Max.   :67.10   Max.   :2.4200   Max.   :81.00  
+ diabetes 
+ neg:500  
+ pos:268  
+          
+          
+          
+          </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -253,6 +306,10 @@ cbind(freq=table(y), percent=round(prop.table(table(y)),2))</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2FwcGx5KFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0sIHNkKVxuYGBgIn0= -->
 <pre class="r"><code>sapply(PimaIndiansDiabetes[,1:8], sd)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICAgcHJlZ25hbnQgICAgIGdsdWNvc2UgICAgcHJlc3N1cmUgICAgIHRyaWNlcHMgICAgIGluc3VsaW4gICAgICAgIG1hc3MgICAgcGVkaWdyZWUgICAgICAgICBhZ2UgXG4gIDMuMzY5NTc4MSAgMzEuOTcyNjE4MiAgMTkuMzU1ODA3MiAgMTUuOTUyMjE3NiAxMTUuMjQ0MDAyNCAgIDcuODg0MTYwMyAgIDAuMzMxMzI4NiAgMTEuNzYwMjMxNSBcbiJ9 -->
+<pre><code>   pregnant     glucose    pressure     triceps     insulin        mass    pedigree         age 
+  3.3695781  31.9726182  19.3558072  15.9522176 115.2440024   7.8841603   0.3313286  11.7602315 </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -270,6 +327,10 @@ mode = function(x) {
 # calculate mode
 sapply(PimaIndiansDiabetes[,1:8], mode)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoicHJlZ25hbnQgIGdsdWNvc2UgcHJlc3N1cmUgIHRyaWNlcHMgIGluc3VsaW4gICAgIG1hc3MgcGVkaWdyZWUgICAgICBhZ2UgXG4gICAxLjAwMCAgMTAwLjAwMCAgIDcwLjAwMCAgICAwLjAwMCAgICAwLjAwMCAgIDMyLjAwMCAgICAwLjI1NCAgIDIyLjAwMCBcbiJ9 -->
+<pre><code>pregnant  glucose pressure  triceps  insulin     mass pedigree      age 
+   1.000  100.000   70.000    0.000    0.000   32.000    0.254   22.000 </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -285,6 +346,10 @@ sapply(PimaIndiansDiabetes[,1:8], mode)</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXBwbHkoUGltYUluZGlhbnNEaWFiZXRlc1ssMTo4XSwgMiwgc2tld25lc3MpXG5gYGAifQ== -->
 <pre class="r"><code>apply(PimaIndiansDiabetes[,1:8], 2, skewness)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICBwcmVnbmFudCAgICBnbHVjb3NlICAgcHJlc3N1cmUgICAgdHJpY2VwcyAgICBpbnN1bGluICAgICAgIG1hc3MgICBwZWRpZ3JlZSAgICAgICAgYWdlIFxuIDAuODk4MTU0OSAgMC4xNzMwNzU0IC0xLjgzNjQxMjYgIDAuMTA4OTQ1NiAgMi4yNjMzODI2IC0wLjQyNzMwNzMgIDEuOTEyNDE3OSAgMS4xMjUxODgwIFxuIn0= -->
+<pre><code>  pregnant    glucose   pressure    triceps    insulin       mass   pedigree        age 
+ 0.8981549  0.1730754 -1.8364126  0.1089456  2.2633826 -0.4273073  1.9124179  1.1251880 </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="kurtosis" class="section level5">
@@ -300,6 +365,10 @@ sapply(PimaIndiansDiabetes[,1:8], mode)</code></pre>
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXBwbHkoUGltYUluZGlhbnNEaWFiZXRlc1ssMTo4XSwgMiwga3VydG9zaXMpXG5gYGAifQ== -->
 <pre class="r"><code>apply(PimaIndiansDiabetes[,1:8], 2, kurtosis)</code></pre>
 <!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiICBwcmVnbmFudCAgICBnbHVjb3NlICAgcHJlc3N1cmUgICAgdHJpY2VwcyAgICBpbnN1bGluICAgICAgIG1hc3MgICBwZWRpZ3JlZSAgICAgICAgYWdlIFxuIDAuMTQyMTg0MCAgMC42MTkzNjk1ICA1LjExNzUxMDAgLTAuNTMwOTM2OSAgNy4xMzMxMzQ5ICAzLjI0NDk2MjcgIDUuNTI4NTM4OSAgMC42MjE3MjY5IFxuIn0= -->
+<pre><code>  pregnant    glucose   pressure    triceps    insulin       mass   pedigree        age 
+ 0.1421840  0.6193695  5.1175100 -0.5309369  7.1331349  3.2449627  5.5285389  0.6217269 </code></pre>
+<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -309,14 +378,15 @@ sapply(PimaIndiansDiabetes[,1:8], mode)</code></pre>
 <p>For numeric variables, an excellent way to think about variable-to-variable interactions is to calculate correlations for each pair of variables. The <strong>cor()</strong> function creates a symmetrical table of all pairs of variable correlations. Deviations from zero show more positive or negative correlation. Values above approximately 0.75 or below -0.75 are perhaps more interesting as they show a high correlation or high negative correlation. Values of 1 and -1 show full positive or negative correlation.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29yKFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0pXG5gYGAifQ== -->
-<pre class="r"><code>cor(PimaIndiansDiabetes[,1:8])</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuY29yKFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0pXG5gYGBcbmBgYCJ9 -->
+<p><code>r</code>r cor(PimaIndiansDiabetes[,1:8])</p>
+<pre><code></code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 </div>
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiRGVzY3JpcHRpdmUgU3RhdGlzdGljcyBpbiBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKYXV0aG9yOiAiQWd1cyBOdXIgSGlkYXlhdCIKLS0tCgojIyMgUHJlcGFyaW5nIHBhY2thZ2VzIGFuZCB0aGVpciBkZXBlbmRlbmNpZXMKCkJlbG93IGlzIHRoZSBsaXN0IG9mIHBhY2thZ2VzIHRoYXQgd2Ugd2lsbCBoYXZlIHRvIGxvYWQgdG8gcnVuIHRoaXMgbm90ZWJvb2s6CgpgYGB7cn0KaW5zdGFsbC5wYWNrYWdlcygibWxiZW5jaCIpCmluc3RhbGwucGFja2FnZXMoImUxMDcxIikKYGBgCgojIyMgTG9hZGluZyBsaWJyYXJpZXMKCmBgYHtyIGVjaG89VH0KbGlicmFyeShtbGJlbmNoKQpsaWJyYXJ5KGUxMDcxKSAjIGZvciBza2V3bmVzcwpsaWJyYXJ5KG5vcnRlc3QpICMgZm9yIGFuZGVyc29uIGRhcmxpbmcKYGBgCgojIyMgTG9hZGluZyBkYXRhc2V0cwoKYGBge3IgZWNobz1UUlVFfQpkYXRhKFBpbWFJbmRpYW5zRGlhYmV0ZXMpCmBgYAoKIyMjIFVzaW5nIERlc2NyaXB0aXZlIFN0YXRpc3RpY3MKCldlIHdpbGwgZXhwbG9yZSBzb21lIGNvbW1vbiB0ZWNobmlxdWVzIHRvIHVuZGVyc3RhbmQgdGhlIGRhdGEgdGhyb3VnaCBkZXNjcmlwdGl2ZSBzdGF0aXN0aWNzLgoKIyMjIyBUeXBlcyBvZiBkYXRhCgp3ZSBuZWVkIHRvIGtub3cgdGhlIHR5cGVzIG9mIHRoZSB2YXJpYWJsZXMgaW4gb3VyIGRhdGEuIFRoZSB0eXBlcyB3aWxsIGluZGljYXRlIHRoZSB0eXBlcyBvZiBmdXJ0aGVyIGFuYWx5c2lzLCB0eXBlcyBvZiB2aXN1YWxpemF0aW9uIGFuZCBldmVuIHRoZSB0eXBlcyBvZiBtYWNoaW5lIGxlYXJuaW5nIGFsZ29yaXRobXMgdGhhdCB3ZSBjYW4gdXNlLiBBZGRpdGlvbmFsbHksIHBlcmhhcHMgc29tZSB2YXJpYWJsZXMgb3VyZSBsb2FkZWQgYXMgb25lIHR5cGUgKGUuZy4gaW50ZWdlcikgYW5kIGNvdWxkIGluIGZhY3QgYmUgcmVwcmVzZW50ZWQgYXMgYW5vdGhlciB0eXBlIChlLmcuIGEgY2F0ZWdvcmljYWwgZmFjdG9yKS4KCmBgYHtyfQpzYXBwbHkoUGltYUluZGlhbnNEaWFiZXRlcywgY2xhc3MpCmBgYAoKIyMjIyBEaXN0cmlidXRpb24gb2YgY2xhc3MgdmFyaWFibGUKCkluIGEgY2xhc3NpZmljYXRpb24gcHJvYmxlbSB3ZSBtdXN0IGtub3cgdGhlIHByb3BvcnRpb24gb2YgaW5zdGFuY2VzIHRoYXQgYmVsb25nIHRvIGVhY2ggY2xhc3MgbGFiZWwuIFRoaXMgaXMgaW1wb3J0YW50IGJlY2F1c2UgaXQgbWF5IGhpZ2hsaWdodCBhbiBpbWJhbGFuY2UgaW4gdGhlIGRhdGEsIHRoYXQgaWYgc2V2ZXJlIG1heSBuZWVkIHRvIGJlIGFkZHJlc3NlZCB3aXRoIHJlYmFsYW5jaW5nIHRlY2huaXF1ZXMuIEluIHRoZSBjYXNlIG9mIGEgbXVsdGljbGFzcyBjbGFzc2lmaWNhdGlvbiBwcm9ibGVtIGl0IG1heSBleHBvc2UgYSBjbGFzcyB3aXRoIGEgc21hbGwgbnVtYmVyIG9mIGluc3RhbmNlcyB0aGF0IG1heSBiZSBjYW5kaWRhdGVzIGZvciByZW1vdmluZyBmcm9tIHRoZSBkYXRhc2V0LgoKYGBge3J9CnkgPSBQaW1hSW5kaWFuc0RpYWJldGVzJGRpYWJldGVzCmNiaW5kKGZyZXE9dGFibGUoeSksIHBlcmNlbnQ9cm91bmQocHJvcC50YWJsZSh0YWJsZSh5KSksMikpCmBgYAoKIyMjIyBTdW1tYXJpemF0aW9uIG9mIGRhdGEKClRoZSAqKnN1bW1hcnkoKSoqIGZ1bmN0aW9uIHN1bW1hcml6ZXMgZWFjaCB2YXJpYWJsZSBpbiBvdXIgZGF0YXNldCBieSBjcmVhdGluZyBhIHRhYmxlIGZvciBlYWNoIHZhcmlhYmxlIGFuZCBsaXN0cyBhIGJyZWFrZG93biBvZiB2YWx1ZXMuIEZhY3RvcnMgYXJlIGRlc2NyaWJlZCBhcyBjb3VudHMgbmV4dCB0byBlYWNoIGNsYXNzIGxhYmVsLiBOdW1lcmljYWwgdmFyaWFibGVzIGFyZSBkZXNjcmliZWQgdXNpbmcgc2l4IHByb3BlcnRpZXMgKE1pbiwgRmlyc3QgUXVhcnRpbGUsIE1lZGlhbiwgTWVhbiwgVGhpcmQgUXVhcnRpbGUgYW5kIE1heCkuIFRoZSBicmVha2Rvd24gYWxzbyBpbmNsdWRlcyBhbiBpbmRpY2F0aW9uIG9mIHRoZSBudW1iZXIgb2YgbWlzc2luZyB2YWx1ZXMgZm9yIGFuIHZhcmlhYmxlLgoKYGBge3J9CnN1bW1hcnkoUGltYUluZGlhbnNEaWFiZXRlcykKYGBgCgojIyMjIFN0YW5kYXJkIGRldmlhdGlvbiBvZiBpbmRlcGVuZGVudCB2YXJpYWJsZXMKCk9uZSB0aGluZyBtaXNzaW5nIGZyb20gdGhlICoqc3VtbWFyeSgpKiogZnVuY3Rpb24gYWJvdmUgaXMgdGhlIHN0YW5kYXJkIGRldmlhdGlvbnMuIFRoZSBzdGFuZGFyZCBkZXZpYXRpb24gYWxvbmcgd2l0aCB0aGUgbWVhbiBhcmUgdXNlZnVsIHRvIGtub3cgd2hldGhlciB0aGUgZGF0YSBoYXMgYSBHYXVzc2lhbiBkaXN0cmlidXRpb24uIEZvciBpbnN0YW5jZSwgaXQgY2FuIGJlIHVzZWZ1bCBmb3IgYSBxdWljayBvdXRsaWVyIHJlbW92YWwgdG9vbCwgd2hlcmUgYW55IHZhbHVlcyB0aGF0IGFyZSBtb3JlIHRoYW4gdGhyZWUgdGltZXMgdGhlIHN0YW5kYXJkIGRldmlhdGlvbiBmcm9tIHRoZSBtZWFuIGFyZSBvdXRzaWRlIG9mIDk5LjclIG9mIHRoZSBkYXRhLgoKYGBge3J9CnNhcHBseShQaW1hSW5kaWFuc0RpYWJldGVzWywxOjhdLCBzZCkKYGBgCgojIyMjIE1vZGUgb2YgaW5kZXBlbmRlbnQgdmFyaWFibGVzCgpBbm90aGVyIG1lYXN1cmVtZW50IHRoYXQncyBtaXNzaW5nIGZyb20gdGhlICoqc3VtbWFyeSgpKiogZnVuY3Rpb24gaXMgdGhlIG1vZGUgd2hpY2ggcmVwcmVzZW50IHRoZSBtb3N0IGZyZXF1ZW50IHZhbHVlIGluIGEgZGlzdHJpYnV0aW9uIG9mIGRhdGEuCgpgYGB7cn0KIyBjcmVhdGUgdGhlIG1vZGUgZnVuY3Rpb24KbW9kZSA9IGZ1bmN0aW9uKHgpIHsKICB1eCA9IHVuaXF1ZSh4KQogIHV4W3doaWNoLm1heCh0YWJ1bGF0ZShtYXRjaCh4LCB1eCkpKV0KfQojIGNhbGN1bGF0ZSBtb2RlCnNhcHBseShQaW1hSW5kaWFuc0RpYWJldGVzWywxOjhdLCBtb2RlKQpgYGAKCiMjIyMgU2tld25lc3Mgb2YgZGF0YQoKSWYgYSBkaXN0cmlidXRpb24gbG9va3MgbmVhcmx5LUdhdXNzaWFuIGJ1dCBpcyBwdXNoZWQgZmFyIGxlZnQgb3IgcmlnaHQgaXQgaXMgdXNlZnVsIHRvIGtub3cgdGhlIHNrZXcuIEdldHRpbmcgYSBmZWVsaW5nIGZvciB0aGUgc2tldyBpcyBtdWNoIGVhc2llciB3aXRoIHBsb3RzIHJhdGhlciB0aGFuIGxvb2tpbmcgYXQgdGhlIHN1bW1hcnkuIE5vbmV0aGVsZXNzLCBjYWxjdWxhdGluZyB0aGUgc2tldyB1cC1mcm9udCBnaXZlcyB3ZSBhIHJlZmVyZW5jZSB0aGF0IHdlIGNhbiB1c2UgbGF0ZXIgaWYgd2UgZGVjaWRlIHRvIGNvcnJlY3QgdGhlIHNrZXcgZm9yIGFuIHZhcmlhYmxlLgoKKiBJdCdzIGxlZnQgc2tld2VkIHdoZW4gdGhlIHZhbHVlIGlzIGxlc3MgdGhhbiB6ZXJvIGFuZCByaWdodCBza2V3ZWQgd2hlbiB0aGUgdmFsdWUgaXMgZ3JlYXRlciB0aGFuIHplcm8KCiogVGhlIGxhcmdlciB0aGUgZGV2aWF0aW9ucyBmcm9tIDAsIHRoZSBtb3JlIHNrZXdlZCB0aGUgZGF0YQoKYGBge3J9CmFwcGx5KFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0sIDIsIHNrZXduZXNzKQpgYGAKCiMjIyMjIEt1cnRvc2lzCgpLdXJ0b3NpcyBtZWFzdXJlcyB0aGUgdGFpbGVkbmVzcyBvZiBhIHByb2JhYmlsaXR5IGRpc3RyaWJ1dGlvbi4KCiogSXQgaXMgbWVzb2t1cnRpYyAoaW50ZXJtZWRpYXRlKSBkaXN0cmlidXRpb24gd2hlbiBrdXJ0b3NpcyB2YWx1ZSA9IDAuIChub3JtYWwgZGlzdHJpYnV0aW9uKQoKKiBJdCBpcyBwbGF0eWt1cnRpYyAoYnJvYWQvIHRoaW5uZXIgdGFpbHMpIGRpc3RyaWJ1dGlvbiB3aGVuIGt1cnRvc2lzIHZhbHVlIDwgMC4gKGNvbnRpbnVvdXMgb3IgZGlzY3JldGUgdW5pZm9ybSBkaXN0cmlidXRpb25zLCBhbmQgdGhlIHJhaXNlZCBjb3NpbmUgZGlzdHJpYnV0aW9uKQoKKiBJdCBpcyBsZXB0b2t1cnRpYyAoc2xlbmRlci8gZmF0dGVyIHRhaWxzKSBkaXN0cmlidXRpb24gd2hlbiBrdXJ0b3NpcyB2YWx1ZSA+IDAuIChTdHVkZW50J3MgdC1kaXN0cmlidXRpb24sIFJheWxlaWdoIGRpc3RyaWJ1dGlvbiwgTGFwbGFjZSBkaXN0cmlidXRpb24sIGV4cG9uZW50aWFsIGRpc3RyaWJ1dGlvbiwgUG9pc3NvbiBkaXN0cmlidXRpb24gYW5kIGxvZ2lzdGljIGRpc3RyaWJ1dGlvbikuCgpgYGB7cn0KYXBwbHkoUGltYUluZGlhbnNEaWFiZXRlc1ssMTo4XSwgMiwga3VydG9zaXMpCmBgYAoKIyMjIyBDb3JyZWxhdGlvbnMgYmV0d2VlbiBpbmRlcGVuZGVudCB2YXJpYWJsZXMKCkZvciBudW1lcmljIHZhcmlhYmxlcywgYW4gZXhjZWxsZW50IHdheSB0byB0aGluayBhYm91dCB2YXJpYWJsZS10by12YXJpYWJsZSBpbnRlcmFjdGlvbnMgaXMgdG8gY2FsY3VsYXRlIGNvcnJlbGF0aW9ucyBmb3IgZWFjaCBwYWlyIG9mIHZhcmlhYmxlcy4gVGhlICoqY29yKCkqKiBmdW5jdGlvbiBjcmVhdGVzIGEgc3ltbWV0cmljYWwgdGFibGUgb2YgYWxsIHBhaXJzIG9mIHZhcmlhYmxlIGNvcnJlbGF0aW9ucy4gRGV2aWF0aW9ucyBmcm9tIHplcm8gc2hvdyBtb3JlIHBvc2l0aXZlIG9yIG5lZ2F0aXZlIGNvcnJlbGF0aW9uLiBWYWx1ZXMgYWJvdmUgYXBwcm94aW1hdGVseSAwLjc1IG9yIGJlbG93IC0wLjc1IGFyZSBwZXJoYXBzIG1vcmUgaW50ZXJlc3RpbmcgYXMgdGhleSBzaG93IGEgaGlnaCBjb3JyZWxhdGlvbiBvciBoaWdoIG5lZ2F0aXZlIGNvcnJlbGF0aW9uLiBWYWx1ZXMgb2YgMSBhbmQgLTEgc2hvdyBmdWxsIHBvc2l0aXZlIG9yIG5lZ2F0aXZlIGNvcnJlbGF0aW9uLgoKYGBge3J9CmNvcihQaW1hSW5kaWFuc0RpYWJldGVzWywxOjhdKQpgYGAK</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiRGVzY3JpcHRpdmUgU3RhdGlzdGljcyBpbiBSIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKYXV0aG9yOiAiQWd1cyBOdXIgSGlkYXlhdCIKLS0tCgojIyMgUHJlcGFyaW5nIHBhY2thZ2VzIGFuZCB0aGVpciBkZXBlbmRlbmNpZXMKCmBgYHtyfQppbnN0YWxsLnBhY2thZ2VzKCJtbGJlbmNoIikKaW5zdGFsbC5wYWNrYWdlcygiZTEwNzEiKQpgYGAKCiMjIyBMb2FkaW5nIGxpYnJhcmllcwoKYGBge3IgZWNobz1UfQpsaWJyYXJ5KG1sYmVuY2gpCmxpYnJhcnkoZTEwNzEpICMgZm9yIHNrZXduZXNzCmxpYnJhcnkobm9ydGVzdCkgIyBmb3IgYW5kZXJzb24gZGFybGluZwpgYGAKCiMjIyBMb2FkaW5nIGRhdGFzZXRzCgpgYGB7ciBlY2hvPVRSVUV9CmRhdGEoUGltYUluZGlhbnNEaWFiZXRlcykKYGBgCgojIyMgVXNpbmcgRGVzY3JpcHRpdmUgU3RhdGlzdGljcwoKV2Ugd2lsbCBleHBsb3JlIHNvbWUgY29tbW9uIHRlY2huaXF1ZXMgdG8gdW5kZXJzdGFuZCB0aGUgZGF0YSB0aHJvdWdoIGRlc2NyaXB0aXZlIHN0YXRpc3RpY3MuCgojIyMjIFR5cGVzIG9mIGRhdGEKCndlIG5lZWQgdG8ga25vdyB0aGUgdHlwZXMgb2YgdGhlIHZhcmlhYmxlcyBpbiBvdXIgZGF0YS4gVGhlIHR5cGVzIHdpbGwgaW5kaWNhdGUgdGhlIHR5cGVzIG9mIGZ1cnRoZXIgYW5hbHlzaXMsIHR5cGVzIG9mIHZpc3VhbGl6YXRpb24gYW5kIGV2ZW4gdGhlIHR5cGVzIG9mIG1hY2hpbmUgbGVhcm5pbmcgYWxnb3JpdGhtcyB0aGF0IHdlIGNhbiB1c2UuIEFkZGl0aW9uYWxseSwgcGVyaGFwcyBzb21lIHZhcmlhYmxlcyBvdXJlIGxvYWRlZCBhcyBvbmUgdHlwZSAoZS5nLiBpbnRlZ2VyKSBhbmQgY291bGQgaW4gZmFjdCBiZSByZXByZXNlbnRlZCBhcyBhbm90aGVyIHR5cGUgKGUuZy4gYSBjYXRlZ29yaWNhbCBmYWN0b3IpLgoKYGBge3J9CnNhcHBseShQaW1hSW5kaWFuc0RpYWJldGVzLCBjbGFzcykKYGBgCgojIyMjIERpc3RyaWJ1dGlvbiBvZiBjbGFzcyB2YXJpYWJsZQoKSW4gYSBjbGFzc2lmaWNhdGlvbiBwcm9ibGVtIHdlIG11c3Qga25vdyB0aGUgcHJvcG9ydGlvbiBvZiBpbnN0YW5jZXMgdGhhdCBiZWxvbmcgdG8gZWFjaCBjbGFzcyBsYWJlbC4gVGhpcyBpcyBpbXBvcnRhbnQgYmVjYXVzZSBpdCBtYXkgaGlnaGxpZ2h0IGFuIGltYmFsYW5jZSBpbiB0aGUgZGF0YSwgdGhhdCBpZiBzZXZlcmUgbWF5IG5lZWQgdG8gYmUgYWRkcmVzc2VkIHdpdGggcmViYWxhbmNpbmcgdGVjaG5pcXVlcy4gSW4gdGhlIGNhc2Ugb2YgYSBtdWx0aWNsYXNzIGNsYXNzaWZpY2F0aW9uIHByb2JsZW0gaXQgbWF5IGV4cG9zZSBhIGNsYXNzIHdpdGggYSBzbWFsbCBudW1iZXIgb2YgaW5zdGFuY2VzIHRoYXQgbWF5IGJlIGNhbmRpZGF0ZXMgZm9yIHJlbW92aW5nIGZyb20gdGhlIGRhdGFzZXQuCgpgYGB7cn0KeSA9IFBpbWFJbmRpYW5zRGlhYmV0ZXMkZGlhYmV0ZXMKY2JpbmQoZnJlcT10YWJsZSh5KSwgcGVyY2VudD1yb3VuZChwcm9wLnRhYmxlKHRhYmxlKHkpKSwyKSkKYGBgCgojIyMjIFN1bW1hcml6YXRpb24gb2YgZGF0YQoKVGhlICoqc3VtbWFyeSgpKiogZnVuY3Rpb24gc3VtbWFyaXplcyBlYWNoIHZhcmlhYmxlIGluIG91ciBkYXRhc2V0IGJ5IGNyZWF0aW5nIGEgdGFibGUgZm9yIGVhY2ggdmFyaWFibGUgYW5kIGxpc3RzIGEgYnJlYWtkb3duIG9mIHZhbHVlcy4gRmFjdG9ycyBhcmUgZGVzY3JpYmVkIGFzIGNvdW50cyBuZXh0IHRvIGVhY2ggY2xhc3MgbGFiZWwuIE51bWVyaWNhbCB2YXJpYWJsZXMgYXJlIGRlc2NyaWJlZCB1c2luZyBzaXggcHJvcGVydGllcyAoTWluLCBGaXJzdCBRdWFydGlsZSwgTWVkaWFuLCBNZWFuLCBUaGlyZCBRdWFydGlsZSBhbmQgTWF4KS4gVGhlIGJyZWFrZG93biBhbHNvIGluY2x1ZGVzIGFuIGluZGljYXRpb24gb2YgdGhlIG51bWJlciBvZiBtaXNzaW5nIHZhbHVlcyBmb3IgYW4gdmFyaWFibGUuCgpgYGB7cn0Kc3VtbWFyeShQaW1hSW5kaWFuc0RpYWJldGVzKQpgYGAKCiMjIyMgU3RhbmRhcmQgZGV2aWF0aW9uIG9mIGluZGVwZW5kZW50IHZhcmlhYmxlcwoKT25lIHRoaW5nIG1pc3NpbmcgZnJvbSB0aGUgKipzdW1tYXJ5KCkqKiBmdW5jdGlvbiBhYm92ZSBpcyB0aGUgc3RhbmRhcmQgZGV2aWF0aW9ucy4gVGhlIHN0YW5kYXJkIGRldmlhdGlvbiBhbG9uZyB3aXRoIHRoZSBtZWFuIGFyZSB1c2VmdWwgdG8ga25vdyB3aGV0aGVyIHRoZSBkYXRhIGhhcyBhIEdhdXNzaWFuIGRpc3RyaWJ1dGlvbi4gRm9yIGluc3RhbmNlLCBpdCBjYW4gYmUgdXNlZnVsIGZvciBhIHF1aWNrIG91dGxpZXIgcmVtb3ZhbCB0b29sLCB3aGVyZSBhbnkgdmFsdWVzIHRoYXQgYXJlIG1vcmUgdGhhbiB0aHJlZSB0aW1lcyB0aGUgc3RhbmRhcmQgZGV2aWF0aW9uIGZyb20gdGhlIG1lYW4gYXJlIG91dHNpZGUgb2YgOTkuNyUgb2YgdGhlIGRhdGEuCgpgYGB7cn0Kc2FwcGx5KFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0sIHNkKQpgYGAKCiMjIyMgTW9kZSBvZiBpbmRlcGVuZGVudCB2YXJpYWJsZXMKCkFub3RoZXIgbWVhc3VyZW1lbnQgdGhhdCdzIG1pc3NpbmcgZnJvbSB0aGUgKipzdW1tYXJ5KCkqKiBmdW5jdGlvbiBpcyB0aGUgbW9kZSB3aGljaCByZXByZXNlbnQgdGhlIG1vc3QgZnJlcXVlbnQgdmFsdWUgaW4gYSBkaXN0cmlidXRpb24gb2YgZGF0YS4KCmBgYHtyfQojIGNyZWF0ZSB0aGUgbW9kZSBmdW5jdGlvbgptb2RlID0gZnVuY3Rpb24oeCkgewogIHV4ID0gdW5pcXVlKHgpCiAgdXhbd2hpY2gubWF4KHRhYnVsYXRlKG1hdGNoKHgsIHV4KSkpXQp9CiMgY2FsY3VsYXRlIG1vZGUKc2FwcGx5KFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0sIG1vZGUpCmBgYAoKIyMjIyBTa2V3bmVzcyBvZiBkYXRhCgpJZiBhIGRpc3RyaWJ1dGlvbiBsb29rcyBuZWFybHktR2F1c3NpYW4gYnV0IGlzIHB1c2hlZCBmYXIgbGVmdCBvciByaWdodCBpdCBpcyB1c2VmdWwgdG8ga25vdyB0aGUgc2tldy4gR2V0dGluZyBhIGZlZWxpbmcgZm9yIHRoZSBza2V3IGlzIG11Y2ggZWFzaWVyIHdpdGggcGxvdHMgcmF0aGVyIHRoYW4gbG9va2luZyBhdCB0aGUgc3VtbWFyeS4gTm9uZXRoZWxlc3MsIGNhbGN1bGF0aW5nIHRoZSBza2V3IHVwLWZyb250IGdpdmVzIHdlIGEgcmVmZXJlbmNlIHRoYXQgd2UgY2FuIHVzZSBsYXRlciBpZiB3ZSBkZWNpZGUgdG8gY29ycmVjdCB0aGUgc2tldyBmb3IgYW4gdmFyaWFibGUuCgoqIEl0J3MgbGVmdCBza2V3ZWQgd2hlbiB0aGUgdmFsdWUgaXMgbGVzcyB0aGFuIHplcm8gYW5kIHJpZ2h0IHNrZXdlZCB3aGVuIHRoZSB2YWx1ZSBpcyBncmVhdGVyIHRoYW4gemVybwoKKiBUaGUgbGFyZ2VyIHRoZSBkZXZpYXRpb25zIGZyb20gMCwgdGhlIG1vcmUgc2tld2VkIHRoZSBkYXRhCgpgYGB7cn0KYXBwbHkoUGltYUluZGlhbnNEaWFiZXRlc1ssMTo4XSwgMiwgc2tld25lc3MpCmBgYAoKIyMjIyMgS3VydG9zaXMKCkt1cnRvc2lzIG1lYXN1cmVzIHRoZSB0YWlsZWRuZXNzIG9mIGEgcHJvYmFiaWxpdHkgZGlzdHJpYnV0aW9uLgoKKiBJdCBpcyBtZXNva3VydGljIChpbnRlcm1lZGlhdGUpIGRpc3RyaWJ1dGlvbiB3aGVuIGt1cnRvc2lzIHZhbHVlID0gMC4gKG5vcm1hbCBkaXN0cmlidXRpb24pCgoqIEl0IGlzIHBsYXR5a3VydGljIChicm9hZC8gdGhpbm5lciB0YWlscykgZGlzdHJpYnV0aW9uIHdoZW4ga3VydG9zaXMgdmFsdWUgPCAwLiAoY29udGludW91cyBvciBkaXNjcmV0ZSB1bmlmb3JtIGRpc3RyaWJ1dGlvbnMsIGFuZCB0aGUgcmFpc2VkIGNvc2luZSBkaXN0cmlidXRpb24pCgoqIEl0IGlzIGxlcHRva3VydGljIChzbGVuZGVyLyBmYXR0ZXIgdGFpbHMpIGRpc3RyaWJ1dGlvbiB3aGVuIGt1cnRvc2lzIHZhbHVlID4gMC4gKFN0dWRlbnQncyB0LWRpc3RyaWJ1dGlvbiwgUmF5bGVpZ2ggZGlzdHJpYnV0aW9uLCBMYXBsYWNlIGRpc3RyaWJ1dGlvbiwgZXhwb25lbnRpYWwgZGlzdHJpYnV0aW9uLCBQb2lzc29uIGRpc3RyaWJ1dGlvbiBhbmQgbG9naXN0aWMgZGlzdHJpYnV0aW9uKS4KCmBgYHtyfQphcHBseShQaW1hSW5kaWFuc0RpYWJldGVzWywxOjhdLCAyLCBrdXJ0b3NpcykKYGBgCgojIyMjIENvcnJlbGF0aW9ucyBiZXR3ZWVuIGluZGVwZW5kZW50IHZhcmlhYmxlcwoKRm9yIG51bWVyaWMgdmFyaWFibGVzLCBhbiBleGNlbGxlbnQgd2F5IHRvIHRoaW5rIGFib3V0IHZhcmlhYmxlLXRvLXZhcmlhYmxlIGludGVyYWN0aW9ucyBpcyB0byBjYWxjdWxhdGUgY29ycmVsYXRpb25zIGZvciBlYWNoIHBhaXIgb2YgdmFyaWFibGVzLiBUaGUgKipjb3IoKSoqIGZ1bmN0aW9uIGNyZWF0ZXMgYSBzeW1tZXRyaWNhbCB0YWJsZSBvZiBhbGwgcGFpcnMgb2YgdmFyaWFibGUgY29ycmVsYXRpb25zLiBEZXZpYXRpb25zIGZyb20gemVybyBzaG93IG1vcmUgcG9zaXRpdmUgb3IgbmVnYXRpdmUgY29ycmVsYXRpb24uIFZhbHVlcyBhYm92ZSBhcHByb3hpbWF0ZWx5IDAuNzUgb3IgYmVsb3cgLTAuNzUgYXJlIHBlcmhhcHMgbW9yZSBpbnRlcmVzdGluZyBhcyB0aGV5IHNob3cgYSBoaWdoIGNvcnJlbGF0aW9uIG9yIGhpZ2ggbmVnYXRpdmUgY29ycmVsYXRpb24uIFZhbHVlcyBvZiAxIGFuZCAtMSBzaG93IGZ1bGwgcG9zaXRpdmUgb3IgbmVnYXRpdmUgY29ycmVsYXRpb24uCgpgYGB7cn0KY29yKFBpbWFJbmRpYW5zRGlhYmV0ZXNbLDE6OF0pCmBgYAo=</div>
 
 
 
